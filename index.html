@@ -42,8 +42,8 @@
     width:300px;z-index:10;pointer-events:none;}
   #hpBar{height:14px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);
     border-radius:7px;overflow:hidden;}
-  #hpFill{height:100%;width:100%;background:linear-gradient(90deg,#e9484f,#ff7a5c);
-    transition:width .15s;}
+  #hpFill{height:100%;width:100%;background:linear-gradient(90deg,#e9484f,#ff7a5c,#ffb36b);
+    transition:width .15s;box-shadow:0 0 8px rgba(255,100,80,.6);}
   #armorTag{font-size:11px;color:#cfe6ff;text-align:center;margin-top:3px;
     text-shadow:0 1px 2px #000;}
 
@@ -55,7 +55,8 @@
     border:2px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
     display:flex;align-items:center;justify-content:center;flex-direction:column;
     font-size:11px;color:#cfe0ea;}
-  .slot.sel{border-color:#7be8ff;box-shadow:0 0 10px rgba(123,232,255,.5);}
+  .slot.sel{border-color:#7be8ff;box-shadow:0 0 12px rgba(123,232,255,.6),inset 0 0 8px rgba(123,232,255,.2);
+    background:rgba(123,232,255,.08);transform:translateY(-2px);transition:transform .1s;}
   .slot .ic{font-size:18px;line-height:1;}
   .slot .ct{position:absolute;right:4px;bottom:2px;font-size:11px;color:#fff;
     text-shadow:0 1px 2px #000;}
@@ -69,13 +70,28 @@
   #compassLabel{position:fixed;top:72px;left:50%;transform:translateX(-50%);
     font-size:11px;color:#cfe6ff;text-shadow:0 1px 3px #000;z-index:10;}
 
+  body.boss #compass{top:96px;} body.boss #compassLabel{top:154px;}
   #bossWrap{position:fixed;top:14px;left:50%;transform:translateX(-50%);
     width:min(560px,70vw);z-index:11;display:none;}
-  #bossName{text-align:center;color:#e9b8ff;font-size:14px;letter-spacing:2px;
-    text-shadow:0 0 8px rgba(200,120,255,.8);margin-bottom:4px;}
-  #bossBar{height:12px;background:rgba(0,0,0,.6);border:1px solid rgba(233,184,255,.5);
-    border-radius:6px;overflow:hidden;}
-  #bossFill{height:100%;width:100%;background:linear-gradient(90deg,#9b4dff,#e070ff);}
+  #bossName{text-align:center;color:#f1d6ff;font-size:16px;letter-spacing:3px;font-weight:600;
+    text-shadow:0 0 10px rgba(200,120,255,.9),0 0 24px rgba(160,80,255,.5);margin-bottom:5px;}
+  #bossName small{font-size:10px;letter-spacing:4px;color:#c99aff;font-weight:400;margin-left:4px;}
+  #bossName .rune{color:#ff8cf4;animation:runeSpin 3s linear infinite;display:inline-block;}
+  @keyframes runeSpin{to{transform:rotate(360deg);}}
+  #bossBar{position:relative;height:16px;background:rgba(10,4,20,.75);border:1px solid rgba(233,184,255,.6);
+    border-radius:8px;overflow:hidden;box-shadow:0 0 12px rgba(190,100,255,.35),inset 0 0 8px rgba(0,0,0,.6);}
+  #bossGhost{position:absolute;inset:0;width:100%;background:rgba(255,255,255,.35);transition:width .9s ease-out;}
+  #bossFill{position:absolute;inset:0;width:100%;transition:width .15s;
+    background:linear-gradient(90deg,#7a2bff,#c45bff 60%,#ff8cf4);
+    background-size:200% 100%;animation:bossShine 2.4s linear infinite;}
+  #bossFill::after{content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(90deg,transparent 0 9.5%,rgba(0,0,0,.35) 9.5% 10%);}
+  @keyframes bossShine{from{background-position:0 0;}to{background-position:200% 0;}}
+  #bossBar.low #bossFill{background:linear-gradient(90deg,#ff2d55,#ff7a3c 60%,#ffd36b);
+    animation:bossShine 1s linear infinite,bossPulse .5s ease-in-out infinite alternate;}
+  @keyframes bossPulse{from{filter:brightness(1);}to{filter:brightness(1.5);}}
+  #bossHpTxt{position:absolute;inset:0;text-align:center;font-size:11px;line-height:16px;
+    color:#fff;text-shadow:0 1px 2px #000;letter-spacing:1px;}
   #pylonTag{text-align:center;font-size:11px;color:#ffb3f1;margin-top:3px;
     text-shadow:0 1px 2px #000;}
 
@@ -89,15 +105,18 @@
     z-index:13;transition:opacity .12s;}
 
   .overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;
-    justify-content:center;flex-direction:column;background:rgba(5,8,14,.82);
+    justify-content:center;flex-direction:column;
+    background:radial-gradient(ellipse at 50% 30%,rgba(60,30,110,.55),transparent 60%),rgba(5,8,14,.86);
     color:#e8f4fa;text-align:center;}
-  .overlay h1{font-size:34px;margin-bottom:14px;letter-spacing:3px;color:#7be8ff;
-    text-shadow:0 0 16px rgba(123,232,255,.6);}
+  .overlay h1{font-size:36px;margin-bottom:14px;letter-spacing:4px;color:#7be8ff;
+    background:linear-gradient(90deg,#7be8ff,#c99aff,#7be8ff);background-size:200% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:bossShine 4s linear infinite;filter:drop-shadow(0 0 14px rgba(150,170,255,.55));}
   .overlay p{font-size:14px;line-height:2;color:#b9ccd6;max-width:520px;}
-  .overlay .btn{margin-top:22px;padding:12px 34px;font-size:16px;cursor:pointer;
-    background:linear-gradient(135deg,#1d7f9e,#15a8c9);color:#fff;border:none;
-    border-radius:8px;letter-spacing:2px;}
-  .overlay .btn:hover{filter:brightness(1.15);}
+  .overlay .btn{margin-top:22px;padding:12px 38px;font-size:16px;cursor:pointer;
+    background:linear-gradient(135deg,#1d7f9e,#15a8c9);color:#fff;border:1px solid rgba(255,255,255,.25);
+    border-radius:10px;letter-spacing:2px;box-shadow:0 0 18px rgba(21,168,201,.45);transition:transform .12s,box-shadow .12s;}
+  .overlay .btn:hover{filter:brightness(1.15);transform:translateY(-2px);box-shadow:0 0 26px rgba(21,168,201,.7);}
   #pauseOv,#deathOv,#winOv{display:none;}
   #deathOv h1{color:#ff6b6b;text-shadow:0 0 16px rgba(255,80,80,.6);}
   #winOv h1{color:#ffd86b;text-shadow:0 0 18px rgba(255,216,107,.7);}
@@ -163,7 +182,7 @@
   <div>🪵 木 <b id="cWood">0</b>　🪨 石 <b id="cStone">0</b></div>
   <div>⬛ 煤 <b id="cCoal">0</b>　⛓️ 鐵 <b id="cIron">0</b></div>
   <div>🟨 金 <b id="cGold">0</b>　💠 鑽 <b id="cDiamond">0</b></div>
-  <div>🏹 箭 <b id="cArrow">0</b>　🧪 藥 <b id="cPotion">0</b></div>
+  <div>🏹 箭 <b id="cArrow">0</b>　🔹 彈 <b id="cAmmo">0</b>　🧪 藥 <b id="cPotion">0</b></div>
   <div id="questLine">🔮 Lumen 水晶 0 / 5</div>
 </div>
 
@@ -171,8 +190,8 @@
 <div id="compassLabel">最近的水晶</div>
 
 <div id="bossWrap">
-  <div id="bossName">流明巨龍 LUMEN DRAGON</div>
-  <div id="bossBar"><div id="bossFill"></div></div>
+  <div id="bossName"><span class="rune">✦</span> 流明巨龍 <small>LUMEN DRAGON</small> <span class="rune">✦</span></div>
+  <div id="bossBar"><div id="bossGhost"></div><div id="bossFill"></div><div id="bossHpTxt">600 / 600</div></div>
   <div id="pylonTag">⚠ 摧毀 4 座治癒塔以阻止巨龍回血</div>
 </div>
 
@@ -213,7 +232,7 @@
     收集散落各地的 <b style="color:#7be8ff">5 顆 Lumen 水晶</b>（跟著光柱與羅盤走），<br>
     開啟傳送門進入終界浮空島 —— 守護者「流明巨龍」與五根黑曜石柱在那裡等你。<br><br>
     WASD 移動　Space 跳躍/游泳　Shift 疾跑<br>
-    左鍵 挖掘/攻擊　右鍵 放置方塊/射箭　滾輪或 1–9 切換快捷欄（共 14 格）<br>
+    左鍵 挖掘/攻擊（手持手槍＝開槍）　右鍵 放置方塊/射箭/開槍　滾輪或 1–9 切換快捷欄（共 15 格）<br>
     鎬挖石礦、斧砍木、鏟挖土沙 —— 用對工具快很多；鐵/金/鑽礦必須手持鎬<br>
     Tab 合成選單　H/N/G 使用藥水　夜晚會有暗影怪出沒，火把能驅趕它們<br>
     <b style="color:#ffd86b">F5 存檔　·　F9 讀檔</b>（進度會保留，下次打開可繼續）
@@ -395,6 +414,14 @@ const SFX={
   craft:()=>{blip(520,0.1,"sine",0.1);setTimeout(()=>blip(780,0.12,"sine",0.1),80);},
   chime:()=>{blip(880,0.25,"sine",0.12);setTimeout(()=>blip(1320,0.35,"sine",0.1),120);},
   bow:()=>blip(420,0.1,"triangle",0.1,200),
+  gun:()=>{try{const ac=audio(),n=(ac.sampleRate*0.16)|0,buf=ac.createBuffer(1,n,ac.sampleRate),d=buf.getChannelData(0);
+      for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
+      const src=ac.createBufferSource(),g=ac.createGain(),f=ac.createBiquadFilter();
+      f.type="lowpass";f.frequency.value=2600;g.gain.value=0.42;
+      src.buffer=buf;src.connect(f);f.connect(g);g.connect(ac.destination);src.start();}catch(e){}
+    blip(140,0.16,"sawtooth",0.16,-100);},
+  click:()=>blip(1400,0.03,"square",0.05),
+  chop:()=>{blip(90,0.16,"square",0.16,-50);setTimeout(()=>blip(60,0.12,"sawtooth",0.1,-20),40);},
   drink:()=>blip(300,0.2,"sine",0.1,160),
   roar:()=>{blip(55,0.8,"sawtooth",0.22,40);setTimeout(()=>blip(48,0.9,"sawtooth",0.2,30),250);},
   win:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>blip(f,0.35,"sine",0.14),i*160));}
@@ -652,6 +679,7 @@ function editSet(x,y,z,id,dim){
 function* allEdits(){ for(const[ck,m]of edits){const dim=Math.floor(ck/16777216);for(const[k,id]of m)yield[k,id,dim];} }
 // 換維度時：火把模型 / 水晶光柱只顯示所屬維度的
 function syncDimVisuals(){
+  motes.visible=(DIM===1);
   for(const t of torches)t.mesh.visible=(t.dim===DIM);
   for(const c of crystals)if(c.beam)c.beam.visible=(DIM===0&&!c.taken);
 }
@@ -810,6 +838,13 @@ starGeo.setAttribute("position",new THREE.Float32BufferAttribute(starPos,3));
 const starMat=new THREE.PointsMaterial({color:0xeef4ff,size:1.6,transparent:true,
   opacity:0,fog:false,depthWrite:false});
 const stars=new THREE.Points(starGeo,starMat); scene.add(stars);
+/* 終界浮游光塵 */
+const moteGeo=new THREE.BufferGeometry(), motePos=[];
+for(let i=0;i<360;i++)motePos.push((Math.random()-0.5)*110,22+Math.random()*34,(Math.random()-0.5)*110);
+moteGeo.setAttribute("position",new THREE.Float32BufferAttribute(motePos,3));
+const moteMat=new THREE.PointsMaterial({color:0xd48cff,size:0.22,transparent:true,opacity:0.75,
+  depthWrite:false,blending:THREE.AdditiveBlending});
+const motes=new THREE.Points(moteGeo,moteMat); motes.visible=false; scene.add(motes);
 
 /* ============ 區塊網格化（裸露面 + 貼圖 UV + 頂點 AO） ============ */
 const transparent=id=>id===B.AIR||id===B.WATER||id===B.TORCH||id===B.GLASS;
@@ -959,7 +994,7 @@ for(const c of crystals){
 /* ============ 玩家狀態與輸入 ============ */
 const P={x:SPAWN.x+0.5,y:0,z:SPAWN.z+0.5,vx:0,vy:0,vz:0,
   yaw:0,pitch:0,onGround:false,hp:100,maxHp:100,
-  pickaxe:0,axe:0,shovel:0,sword:0,armor:0,nightVision:0,regen:0,iframe:0,kills:0};
+  pickaxe:0,axe:0,shovel:0,sword:0,armor:0,gun:0,nightVision:0,regen:0,iframe:0,kills:0};
 function surfaceY(x,z){
   const fx=Math.floor(x),fz=Math.floor(z);
   if(!getChunk(fx>>4,fz>>4))return heightAt(fx,fz);
@@ -969,7 +1004,7 @@ function surfaceY(x,z){
 }
 P.y=surfaceY(P.x,P.z)+1.05;
 const counts={wood:0,stone:0,dirt:0,sand:0,coal:0,iron:0,gold:0,diamond:0,
-  torch:0,arrow:0,heal:0,nv:0,apple:0,crystal:0,plank:0,glass:0,brick:0,glow:0};
+  torch:0,arrow:0,ammo:0,heal:0,nv:0,apple:0,crystal:0,plank:0,glass:0,brick:0,glow:0};
 const keys={};
 let locked=false, menuOpen=false, started=false, dead=false, won=false;
 let mouseDown=false, gameTime=0, dayT=0.12;
@@ -1101,7 +1136,7 @@ function rayBlocks(maxD){
     const px=o.x+dir.x*t, py=o.y+dir.y*t, pz=o.z+dir.z*t;
     const bx=Math.floor(px),by=Math.floor(py),bz=Math.floor(pz);
     const id=getB(bx,by,bz);
-    if(id!==B.AIR&&id!==B.WATER)return{hit:[bx,by,bz],id,prev};
+    if(id!==B.AIR&&id!==B.WATER)return{hit:[bx,by,bz],id,prev,t};
     const k=bx+","+by+","+bz;
     if(!prev||prev.k!==k)prev={k,p:[bx,by,bz]};
   }
@@ -1141,7 +1176,7 @@ function setBlock(x,y,z,id){
 }
 function updateMining(dt){
   const bar=document.getElementById("mineBar"),fill=document.getElementById("mineFill");
-  if(!mouseDown||dead||won){bar.style.display="none";mining=null;return;}
+  if(!mouseDown||dead||won||HOTBAR[selSlot].kind==="gun"){bar.style.display="none";mining=null;return;}
   const rb=rayBlocks(5.5);
   if(!rb||rb.id===B.FRAME||rb.id===B.CORE||rb.id===B.BEDROCK||rb.id===B.LAVA){bar.style.display="none";mining=null;return;}
   const k=rb.hit.join(",");
@@ -1178,6 +1213,7 @@ function rightClick(){
   { const rb=rayBlocks(5.5); if(rb&&rb.id===B.CHEST){openChest(...rb.hit);VM.swing(0.6);return;} }
   const item=HOTBAR[selSlot];
   if(item.kind==="bow"){shootArrow();return;}
+  if(item.kind==="gun"){fireGun();return;}
   if(item.kind!=="block")return;
   if(counts[item.res]<=0){toast("沒有 "+item.name+" 了");return;}
   const rb=rayBlocks(5.5);
@@ -1190,12 +1226,19 @@ function rightClick(){
   setBlock(x,y,z,item.id); counts[item.res]--; SFX.place(); VM.swing(0.6);
   if(item.id===B.TORCH)addTorchMesh(x,y,z);
 }
+const AXE_DMG=[0,8,15,34]; // 無/木/鐵/鑽 —— 斧頭是重擊武器（有冷卻）
 function swordDmg(){
-  const base=[4,9,16,30][P.sword];
-  return HOTBAR[selSlot].kind==="sword"?base:Math.max(3,Math.round(base*0.45));
+  const it=HOTBAR[selSlot], sw=[4,9,16,30][P.sword], weak=Math.max(3,Math.round(sw*0.45));
+  if(it.kind==="sword")return sw;
+  if(it.kind==="tool"&&it.tool==="axe"&&P.axe>0)return Math.max(AXE_DMG[P.axe],weak);
+  return weak;
 }
 function tryAttack(){
-  VM.swing(1);
+  const held=HOTBAR[selSlot];
+  if(held.kind==="gun"){fireGun();return;}
+  const heavy=held.kind==="tool"&&held.tool==="axe"&&P.axe>0;
+  if(heavy&&axeCd>0){VM.swing(0.5);return;}         // 斧頭重擊冷卻中
+  VM.swing(heavy?1.35:1);
   // 先打實體，再挖方塊（挖掘由 updateMining 持續處理）
   const dir=new THREE.Vector3(); camera.getWorldDirection(dir);
   const o=camera.position;
@@ -1204,13 +1247,65 @@ function tryAttack(){
     if(t<0||t>reach)return false;
     return v.sub(dir.clone().multiplyScalar(t)).length()<rad;
   };
+  const dmg=swordDmg();
+  const landed=pos=>{
+    if(!heavy)return;
+    axeCd=P.axe>=3?0.5:0.65; SFX.chop();
+    if(P.axe>=3)spawnParticles(pos.x,pos.y,pos.z,[0.45,0.95,1],10);   // 鑽石斧：青色碎晶
+  };
   for(const e of enemies){ // 以身體中心（腳底 +0.8）判定
-    if(tryHit(e.g.position.clone().setY(e.g.position.y+0.8),1.1,3.8)){hurtEnemy(e,swordDmg(),dir);return;}
+    const c=e.g.position.clone().setY(e.g.position.y+0.8);
+    if(tryHit(c,1.1,3.8)){hurtEnemy(e,dmg,heavy?dir.clone().multiplyScalar(1.8):dir);landed(c);return;}
   }
   for(const py of pylons){
-    if(py.hp>0&&tryHit(py.mesh.position,1.4,4.2)){hurtPylon(py,swordDmg());return;}
+    if(py.hp>0&&tryHit(py.mesh.position,1.4,4.2)){hurtPylon(py,dmg);landed(py.mesh.position);return;}
   }
-  if(dragon&&dragon.hp>0&&tryHit(dragon.g.position,3.2,5.5)){hurtDragon(swordDmg());return;}
+  if(dragon&&dragon.hp>0&&tryHit(dragon.g.position,3.8,6.0)){hurtDragon(dmg);landed(dragon.g.position);return;}
+}
+
+/* ============ 手槍（即時命中 hitscan） ============ */
+let axeCd=0, gunCd=0;
+const GUN_DMG=22, GUN_RANGE=60;
+const tracers=[];
+function fireGun(){
+  if(P.gun<1){toast("還沒有手槍（Tab 合成：鐵×6 金×2 煤×2）");return;}
+  if(gunCd>0)return;
+  if(counts.ammo<=0){SFX.click();gunCd=0.25;toast("沒有子彈（Tab 合成：鐵×1 煤×1 → ×12）");return;}
+  counts.ammo--; gunCd=0.3; SFX.gun(); VM.fire();
+  const dir=new THREE.Vector3(); camera.getWorldDirection(dir);
+  const o=camera.position.clone();
+  // 1) 方塊遮擋距離
+  const rb=rayBlocks(GUN_RANGE);
+  let best=rb?rb.t:GUN_RANGE, hit=null;
+  // 2) 實體：取射線上最近者
+  const test=(pos,rad,fn)=>{
+    const v=pos.clone().sub(o), t=v.dot(dir);
+    if(t<0||t>=best)return;
+    if(v.sub(dir.clone().multiplyScalar(t)).length()<rad){best=t;hit=fn;}
+  };
+  for(const e of enemies)test(e.g.position.clone().setY(e.g.position.y+0.8),0.85,
+    ()=>{hurtEnemy(e,GUN_DMG,dir);return[0.3,0.8,0.9];});
+  for(const py of pylons)if(py.hp>0)for(const hy of[1,3,5.5])
+    test(py.mesh.position.clone().setY(py.mesh.position.y+hy),0.9,()=>{hurtPylon(py,GUN_DMG);return[1,0.5,0.95];});
+  if(dragon&&dragon.hp>0)test(dragon.g.position,3.8,()=>{hurtDragon(GUN_DMG);return[0.75,0.45,1];});
+  const end=o.clone().add(dir.clone().multiplyScalar(best));
+  if(hit){const col=hit();spawnParticles(end.x,end.y,end.z,col,6);}
+  else if(rb){spawnParticles(end.x-dir.x*0.1,end.y-dir.y*0.1,end.z-dir.z*0.1,[1,0.85,0.5],5);}
+  // 3) 彈道曳光
+  const right=new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld,0);
+  const up=new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld,1);
+  const start=o.clone().add(dir.clone().multiplyScalar(0.7)).add(right.multiplyScalar(0.22)).add(up.multiplyScalar(-0.16));
+  const geo=new THREE.BufferGeometry().setFromPoints([start,end]);
+  const line=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xffe08a,transparent:true,opacity:0.95,
+    blending:THREE.AdditiveBlending,depthWrite:false}));
+  scene.add(line); tracers.push({line,ttl:0.08});
+}
+function updateWeapons(dt){
+  axeCd=Math.max(0,axeCd-dt); gunCd=Math.max(0,gunCd-dt);
+  for(let i=tracers.length-1;i>=0;i--){
+    const tr=tracers[i]; tr.ttl-=dt; tr.line.material.opacity=Math.max(0,tr.ttl/0.08);
+    if(tr.ttl<=0){scene.remove(tr.line);tr.line.geometry.dispose();tracers.splice(i,1);}
+  }
 }
 
 /* ============ 粒子池 ============ */
@@ -1266,7 +1361,7 @@ function updateArrows(dt){
     if(!dead2){
       for(const e of enemies)if(e.g.position.clone().setY(e.g.position.y+0.8).distanceTo(p)<1.1){hurtEnemy(e,18,a.v.clone().normalize());dead2=true;break;}
       if(!dead2)for(const py of pylons)if(py.hp>0&&py.mesh.position.distanceTo(p)<1.5){hurtPylon(py,18);dead2=true;break;}
-      if(!dead2&&dragon&&dragon.hp>0&&dragon.g.position.distanceTo(p)<3.0){hurtDragon(20);dead2=true;}
+      if(!dead2&&dragon&&dragon.hp>0&&dragon.g.position.distanceTo(p)<3.6){hurtDragon(20);dead2=true;}
     }
     if(dead2){scene.remove(a.m);arrows.splice(i,1);}
   }
@@ -1368,89 +1463,225 @@ function activatePortal(){
 function fillPortalCore(){
   for(const[x,y,z]of portalCells)setBlock(x,y,z,B.CORE);
 }
+/* ---------- 治癒塔：黑曜石基座 + 懸浮旋轉水晶 + 光環 + 光束 ---------- */
+const pylonCrystalGeo=new THREE.OctahedronGeometry(0.55,0);
+const pylonRingGeo=new THREE.TorusGeometry(0.95,0.06,6,24);
+const pylonBeamGeo=new THREE.CylinderGeometry(0.18,0.32,14,8,1,true);
 function makePylon(x,z){
   const y=surfaceY(x,z)+1;
   const g=new THREE.Group();
-  const base=new THREE.Mesh(new THREE.BoxGeometry(1,4.5,1),
-    new THREE.MeshLambertMaterial({color:0x3a1f55}));
-  base.position.y=2.25;
-  const top=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.7,0.7),
+  const base=new THREE.Mesh(new THREE.BoxGeometry(1,4.2,1),
+    new THREE.MeshLambertMaterial({color:0x2a1646,emissive:0x12061f}));
+  base.position.y=2.1;
+  const cap=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.35,1.5),
+    new THREE.MeshLambertMaterial({color:0x3d2066}));
+  cap.position.y=4.3;
+  const top=new THREE.Mesh(pylonCrystalGeo,
     new THREE.MeshBasicMaterial({color:0xff7af0}));
-  top.position.y=4.8;
-  g.add(base,top); g.position.set(x+0.5,y,z+0.5); scene.add(g);
-  pylons.push({mesh:g,top,hp:80});
+  top.position.y=5.5; top.scale.set(0.8,1.3,0.8);
+  const ring=new THREE.Mesh(pylonRingGeo,
+    new THREE.MeshBasicMaterial({color:0xd98cff,transparent:true,opacity:0.7}));
+  ring.position.y=5.5; ring.rotation.x=Math.PI/2;
+  const beam=new THREE.Mesh(pylonBeamGeo,
+    new THREE.MeshBasicMaterial({color:0xe39bff,transparent:true,opacity:0.14,
+      side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));
+  beam.position.y=5.5+7;
+  g.add(base,cap,top,ring,beam); g.position.set(x+0.5,y,z+0.5); scene.add(g);
+  pylons.push({mesh:g,top,ring,beam,hp:80,phase:Math.random()*6.28,tether:null});
 }
+function pylonDestroyedVisual(py){
+  py.top.material.color.setHex(0x3a3a44);
+  py.mesh.children[0].material.color.setHex(0x1c1c22);
+  py.mesh.children[0].material.emissive.setHex(0x000000);
+  py.mesh.children[1].material.color.setHex(0x222228);
+  py.ring.visible=false; py.beam.visible=false;
+  if(py.tether){scene.remove(py.tether);py.tether=null;}
+}
+/* 治癒光束（塔 → 龍） */
+const tetherGeo=new THREE.CylinderGeometry(0.07,0.07,1,6,1,true);
+tetherGeo.rotateX(Math.PI/2); tetherGeo.translate(0,0,0.5);
+function makeTether(){
+  return new THREE.Mesh(tetherGeo,new THREE.MeshBasicMaterial({color:0xff9cf5,
+    transparent:true,opacity:0.5,depthWrite:false,blending:THREE.AdditiveBlending}));
+}
+
+/* ---------- 流明巨龍：分節身體、雙關節翅膀、搖擺尾巴、發光水晶 ---------- */
 function makeDragon(){
   const g=new THREE.Group();
-  const M=c=>new THREE.MeshLambertMaterial({color:c});
-  const body=new THREE.Mesh(new THREE.BoxGeometry(2.6,1.6,5),M(0x1d2438)); g.add(body);
-  const head=new THREE.Mesh(new THREE.BoxGeometry(1.3,1.2,1.7),M(0x252e48));
-  head.position.set(0,0.5,-3.2); g.add(head);
-  const eyeM=new THREE.MeshBasicMaterial({color:0xb56bff});
-  const e1=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.15,0.1),eyeM);
-  const e2=e1.clone(); e1.position.set(-0.4,0.7,-4.0); e2.position.set(0.4,0.7,-4.0);
-  g.add(e1,e2);
-  const tail=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.7,3.4),M(0x1d2438));
-  tail.position.set(0,0,4); g.add(tail);
-  const wingM=new THREE.MeshLambertMaterial({color:0x4a2a6e,side:THREE.DoubleSide,
-    transparent:true,opacity:0.92});
-  const wL=new THREE.Mesh(new THREE.BoxGeometry(5,0.12,2.6),wingM);
-  const wR=wL.clone();
-  wL.position.set(-3.6,0.6,0); wR.position.set(3.6,0.6,0);
-  g.add(wL,wR);
+  const M=(c,e)=>new THREE.MeshLambertMaterial({color:c,emissive:e||0x000000});
+  const bodyM=M(0x171c33,0x05061a), bellyM=M(0x2a3252,0x08091c), hornM=M(0x0d0f1c);
+  const glowM=new THREE.MeshBasicMaterial({color:0xc26bff});
+  const eyeM=new THREE.MeshBasicMaterial({color:0xe9b8ff});
+  const crystals=[];                       // 可脈動的發光件
+  const box=(w,h,d,m,x,y,z,parent)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
+    mesh.position.set(x,y,z);(parent||g).add(mesh);return mesh;};
+  const spike=(s,x,y,z,parent,rot)=>{const mesh=new THREE.Mesh(new THREE.ConeGeometry(s*0.45,s,4),glowM.clone());
+    mesh.position.set(x,y,z);mesh.rotation.y=Math.PI/4;if(rot)mesh.rotation.x=rot;
+    (parent||g).add(mesh);crystals.push(mesh);return mesh;};
+
+  // 軀幹：胸 → 腹 → 臀（頭朝 +z，與飛行方向一致）
+  box(2.9,2.0,2.8,bodyM,0,0,0.6);
+  box(2.5,1.7,2.4,bodyM,0,-0.05,-1.9);
+  box(2.0,1.4,2.0,bodyM,0,-0.1,-3.9);
+  box(2.2,0.5,4.6,bellyM,0,-0.95,-1.2);           // 腹甲
+  // 背脊水晶
+  [[1.4,0.1,1.9],[1.2,0.1,0.5],[1.1,0.0,-0.9],[0.95,-0.05,-2.3],[0.8,-0.1,-3.7]]
+    .forEach(([s,y,z])=>spike(s,0,y+1.0+s*0.4,z));
+
+  // 脖子（兩節往前上揚）＋ 頭
+  const neck1=new THREE.Group(); neck1.position.set(0,0.55,1.9); g.add(neck1);
+  box(1.3,1.3,1.6,bodyM,0,0.25,0.7,neck1);
+  const neck2=new THREE.Group(); neck2.position.set(0,0.55,1.4); neck1.add(neck2);
+  box(1.1,1.1,1.5,bodyM,0,0.2,0.6,neck2);
+  const head=new THREE.Group(); head.position.set(0,0.45,1.3); neck2.add(head);
+  box(1.5,1.2,1.5,bodyM,0,0.2,0.5,head);          // 顱骨
+  box(1.1,0.75,1.5,bodyM,0,0.1,1.9,head);         // 上顎／吻部
+  box(0.5,0.3,0.4,bellyM,0,0.62,2.3,head);        // 鼻樑隆起
+  const jaw=new THREE.Group(); jaw.position.set(0,-0.3,1.1); head.add(jaw);
+  box(1.0,0.4,1.55,bellyM,0,-0.15,0.75,jaw);      // 下顎（可開合）
+  for(let i=0;i<3;i++){box(0.12,0.25,0.12,eyeM,-0.35+i*0.35,0.05,1.45,jaw);}   // 下牙
+  for(let i=0;i<3;i++){box(0.12,0.25,0.12,eyeM,-0.35+i*0.35,-0.38,2.5,head);}  // 上牙
+  const eyeL=box(0.32,0.2,0.16,eyeM,-0.55,0.42,1.26,head);
+  const eyeR=box(0.32,0.2,0.16,eyeM,0.55,0.42,1.26,head);
+  // 角（後掠）＋ 頭頂小水晶
+  for(const s of[-1,1]){
+    const h1=box(0.28,0.28,1.3,hornM,s*0.5,0.75,-0.35,head); h1.rotation.x=-0.55;
+    const h2=box(0.2,0.2,0.9,hornM,s*0.55,1.25,-1.0,head); h2.rotation.x=-1.1;
+  }
+  spike(0.6,0,1.05,0.2,head);
+  // 頭部點光源（紫光照亮周圍方塊）
+  const light=new THREE.PointLight(0xb46cff,1.4,22,2); light.position.set(0,0.3,1.6); head.add(light);
+
+  // 翅膀：肩關節 + 肘關節，膜用 ShapeGeometry
+  const memM=new THREE.MeshLambertMaterial({color:0x4b2680,emissive:0x1c0838,
+    side:THREE.DoubleSide,transparent:true,opacity:0.88});
+  const memShape=pts=>{const sh=new THREE.Shape();sh.moveTo(pts[0][0],pts[0][1]);
+    for(let i=1;i<pts.length;i++)sh.lineTo(pts[i][0],pts[i][1]);sh.closePath();
+    const mesh=new THREE.Mesh(new THREE.ShapeGeometry(sh),memM);mesh.rotation.x=Math.PI/2;return mesh;};
+  const boneM=M(0x202647,0x06071a);
+  const bone=(len,x0,z0,ang,parent)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(len,0.22,0.22),boneM);
+    b.position.set(x0+Math.cos(ang)*len/2,0,z0-Math.sin(ang)*len/2);b.rotation.y=ang;parent.add(b);return b;};
+  function makeWing(){
+    const shoulder=new THREE.Group();
+    const inner=memShape([[0,1.3],[3.2,0.9],[3.2,-1.3],[1.4,-2.0],[0,-2.4]]);
+    shoulder.add(inner); bone(3.2,0,0,0,shoulder); bone(2.5,0,0,-0.65,shoulder);
+    const elbow=new THREE.Group(); elbow.position.set(3.2,0,0); shoulder.add(elbow);
+    const outer=memShape([[0,0.9],[3.8,0.3],[3.2,-0.3],[2.6,-1.0],[1.2,-1.4],[0,-1.3]]);
+    elbow.add(outer); bone(3.8,0,0,0.05,elbow); bone(3.0,0,0,-0.35,elbow);
+    const tip=spike(0.7,3.9,0,0.25,elbow,Math.PI/2); tip.rotation.z=-Math.PI/2;
+    return{shoulder,elbow};
+  }
+  const wR=makeWing(); wR.shoulder.position.set(1.3,0.75,0.4); g.add(wR.shoulder);
+  const wL=makeWing(); wL.shoulder.position.set(-1.3,0.75,0.4); wL.shoulder.scale.x=-1; g.add(wL.shoulder);
+
+  // 尾巴：五節逐漸縮小，末端水晶尾鰭
+  const tailSegs=[]; let parent=g, pz=-4.9;
+  for(let i=0;i<5;i++){
+    const seg=new THREE.Group(); seg.position.set(0,i?0:-0.1,i?-1.5:pz); parent.add(seg);
+    const s=1.0-i*0.16; box(s,s*0.85,1.7,bodyM,0,0,-0.75,seg);
+    if(i<4)spike(0.55-i*0.07,0,s*0.45+0.2,-0.6,seg);
+    tailSegs.push(seg); parent=seg;
+  }
+  const fin=spike(1.3,0,0,-1.9,parent,-Math.PI/2); fin.scale.set(1.6,1,0.5);
+
+  // 四肢（收攏於腹下）
+  for(const[x,z]of[[-0.9,1.0],[0.9,1.0],[-0.75,-2.6],[0.75,-2.6]]){
+    const leg=box(0.42,0.9,0.5,bodyM,x,-1.2,z); leg.rotation.x=0.5;
+    const foot=box(0.5,0.28,0.65,bellyM,x,-1.6,z+0.3);
+    for(let i=0;i<3;i++)box(0.1,0.1,0.3,eyeM,x-0.15+i*0.15,-1.6,z+0.75);
+  }
+
   scene.add(g);
-  return{g,wL,wR,hp:600,maxHp:600,state:"circle",t:0,angle:0,
-    breathT:2.0,chargeDir:new THREE.Vector3(),hitCd:0};
+  return{g,wL,wR,jaw,neck1,neck2,tailSegs,crystals,eyeL,eyeR,light,
+    hp:600,maxHp:600,state:"circle",t:0,angle:0,
+    breathT:2.0,chargeDir:new THREE.Vector3(),hitCd:0,bank:0,trailT:0};
 }
+let dyingDragon=null;
 function spawnBoss(){
   bossSpawned=true; SFX.roar();
   dragon=makeDragon();
-  dragon.g.position.set(arenaPos.x,arenaPos.y+16,arenaPos.z);
+  dragon.g.position.set(arenaPos.x,arenaPos.y+34,arenaPos.z);   // 自高空俯衝登場
   for(const p of END_PILLARS.slice(0,4))makePylon(p.x,p.z);
-  document.getElementById("bossWrap").style.display="block";
+  document.getElementById("bossWrap").style.display="block"; document.body.classList.add("boss");
   toast("🐉 流明巨龍 現身！");
 }
 function alivePylons(){return pylons.filter(p=>p.hp>0).length;}
 function hurtPylon(py,dmg){
   py.hp-=dmg; SFX.hit();
-  spawnParticles(py.mesh.position.x,py.mesh.position.y+4,py.mesh.position.z,[1,0.5,0.95],6);
+  spawnParticles(py.mesh.position.x,py.mesh.position.y+5.2,py.mesh.position.z,[1,0.5,0.95],6);
   if(py.hp<=0){
-    py.top.material.color.setHex(0x333333);
-    py.mesh.children[0].material.color.setHex(0x222222);
+    pylonDestroyedVisual(py);
+    spawnParticles(py.mesh.position.x,py.mesh.position.y+5.2,py.mesh.position.z,[1,0.75,1],28);
     toast(`治癒塔被摧毀（剩 ${alivePylons()} 座）`);
   }
 }
 function hurtDragon(dmg){
   if(!dragon||dragon.hp<=0)return;
   dragon.hp-=dmg; SFX.hit();
-  spawnParticles(dragon.g.position.x,dragon.g.position.y,dragon.g.position.z,[0.7,0.4,1],8);
+  const dp=dragon.g.position;
+  spawnParticles(dp.x,dp.y,dp.z,[0.7,0.4,1],8);
+  // 受擊閃白
+  for(const c of dragon.crystals)c.material.color.setHex(0xffffff);
   if(dragon.hp<=0){
     dragonDead=true; SFX.roar();
-    spawnParticles(dragon.g.position.x,dragon.g.position.y,dragon.g.position.z,[0.8,0.5,1],40);
-    scene.remove(dragon.g);
-    document.getElementById("bossWrap").style.display="none";
+    for(const py of pylons)if(py.tether){scene.remove(py.tether);py.tether=null;}
+    dyingDragon={g:dragon.g,d:dragon,t:0,vy:0};
+    dragon=null;
+    document.getElementById("bossWrap").style.display="none"; document.body.classList.remove("boss");
+    toast("💥 流明巨龍 開始崩解……");
+  }
+}
+/* 死亡動畫：旋轉墜落 → 水晶過載 → 爆散 → 開啟出口傳送門 */
+function updateDragonDeath(dt){
+  if(!dyingDragon)return;
+  const D=dyingDragon, g=D.g, d=D.d; D.t+=dt;
+  D.vy-=4*dt; g.position.y+=D.vy*dt;
+  g.rotation.y+=dt*2.2; g.rotation.z+=dt*0.9;
+  const k=Math.min(1,D.t/3);
+  const flap=Math.sin(D.t*18)*0.25;
+  d.wL.shoulder.rotation.z=flap; d.wR.shoulder.rotation.z=-flap;
+  for(const c of d.crystals){const s=1+k*1.2+Math.sin(D.t*25+c.position.z)*0.3*k;c.scale.setScalar(Math.max(0.3,s));
+    c.material.color.setHSL(0.8-k*0.8,1,0.55+k*0.4);}
+  d.light.intensity=1.4+k*6; d.light.color.setHSL(0.78-k*0.7,1,0.6);
+  if(Math.random()<0.8)spawnParticles(g.position.x+(Math.random()-0.5)*4,g.position.y+(Math.random()-0.5)*2,
+    g.position.z+(Math.random()-0.5)*4,[0.85+k*0.15,0.5+k*0.4,1],3);
+  const gy=surfaceY(g.position.x,g.position.z)+2;
+  if(D.t>=3||g.position.y<=gy){
+    for(let i=0;i<4;i++)spawnParticles(g.position.x,g.position.y,g.position.z,[1,0.75+i*0.08,1],30);
+    scene.remove(g); dyingDragon=null; SFX.roar();
+    const f=document.getElementById("dmgFlash"); f.style.background="rgba(230,180,255,.75)";
+    f.style.opacity=1; setTimeout(()=>{f.style.opacity=0;setTimeout(()=>f.style.background="",200);},180);
     fillExitPortal();
     toast("🏆 巨龍倒下！島中央的出口傳送門已開啟 —— 走進去吧");
   }
 }
-const breathGeo=new THREE.SphereGeometry(0.32,8,8);
-const breathMat=new THREE.MeshBasicMaterial({color:0xd87aff});
+/* 龍息：核心 + 外層光暈（加色混合），落地留下脈動毒沼 */
+const breathGeo=new THREE.SphereGeometry(0.3,8,8);
+const breathGlowGeo=new THREE.SphereGeometry(0.62,8,8);
+const breathMat=new THREE.MeshBasicMaterial({color:0xffe6ff});
+const breathGlowMat=new THREE.MeshBasicMaterial({color:0xc35bff,transparent:true,opacity:0.55,
+  depthWrite:false,blending:THREE.AdditiveBlending});
 function fireBreath(){
-  const from=dragon.g.position.clone();
+  const from=new THREE.Vector3(); dragon.jaw.getWorldPosition(from);
   for(let i=0;i<3;i++){
     const target=new THREE.Vector3(P.x+(Math.random()-0.5)*4,P.y+0.9,P.z+(Math.random()-0.5)*4);
     const v=target.sub(from).normalize().multiplyScalar(14);
     const m=new THREE.Mesh(breathGeo,breathMat);
+    m.add(new THREE.Mesh(breathGlowGeo,breathGlowMat));
     m.position.copy(from); scene.add(m);
-    breaths.push({m,v,ttl:5});
+    breaths.push({m,v,ttl:5,tr:0});
   }
 }
 const puddleGeo=new THREE.CircleGeometry(2.4,18);
+const puddleRingGeo=new THREE.RingGeometry(2.1,2.4,24);
 function updateBoss(dt){
+  updateDragonDeath(dt);
   // 噴吐物
   for(let i=breaths.length-1;i>=0;i--){
     const b=breaths[i]; b.ttl-=dt; b.v.y-=2.5*dt;
     b.m.position.add(b.v.clone().multiplyScalar(dt));
+    b.m.rotation.y+=dt*6;
+    b.tr-=dt; if(b.tr<=0){b.tr=0.08;spawnParticles(b.m.position.x,b.m.position.y,b.m.position.z,[0.85,0.45,1],1);}
     const p=b.m.position;
     let gone=b.ttl<=0;
     if(p.distanceTo(new THREE.Vector3(P.x,P.y+0.9,P.z))<1.1){damage(12,"被龍息擊中");gone=true;}
@@ -1458,28 +1689,68 @@ function updateBoss(dt){
     if(p.y<=gy+0.2){
       gone=true;
       const m=new THREE.Mesh(puddleGeo,new THREE.MeshBasicMaterial({color:0xc35bff,
-        transparent:true,opacity:0.45,side:THREE.DoubleSide}));
+        transparent:true,opacity:0.45,side:THREE.DoubleSide,depthWrite:false}));
+      const ring=new THREE.Mesh(puddleRingGeo,new THREE.MeshBasicMaterial({color:0xffb0ff,
+        transparent:true,opacity:0.8,side:THREE.DoubleSide,depthWrite:false}));
+      ring.position.z=0.01; m.add(ring);
       m.rotation.x=-Math.PI/2; m.position.set(p.x,gy+0.06,p.z);
-      scene.add(m); puddles.push({m,ttl:6});
+      scene.add(m); puddles.push({m,ring,ttl:6});
+      spawnParticles(p.x,gy+0.3,p.z,[0.8,0.4,1],6);
     }
     if(gone){scene.remove(b.m);breaths.splice(i,1);}
   }
   for(let i=puddles.length-1;i>=0;i--){
     const pu=puddles[i]; pu.ttl-=dt;
-    pu.m.material.opacity=0.45*Math.min(1,pu.ttl/1.5);
+    const fade=Math.min(1,pu.ttl/1.5);
+    pu.m.material.opacity=(0.38+Math.sin(gameTime*5)*0.08)*fade;
+    pu.ring.material.opacity=0.8*fade; pu.ring.scale.setScalar(1+Math.sin(gameTime*5)*0.04);
     if(Math.hypot(P.x-pu.m.position.x,P.z-pu.m.position.z)<2.4&&
        Math.abs(P.y-pu.m.position.y)<1.6)damage(6*dt,"站在龍息殘留中",true);
     if(pu.ttl<=0){scene.remove(pu.m);puddles.splice(i,1);}
   }
+  // 治癒塔的水晶旋轉／光環脈動
+  for(const py of pylons){
+    if(py.hp<=0)continue;
+    py.top.rotation.y+=dt*1.6; py.top.position.y=5.5+Math.sin(gameTime*2+py.phase)*0.25;
+    py.ring.rotation.z+=dt*0.9; py.ring.position.y=py.top.position.y;
+    py.beam.material.opacity=0.1+Math.sin(gameTime*3+py.phase)*0.05;
+  }
   if(!dragon||dragon.hp<=0)return;
   const d=dragon, dp=d.g.position;
   d.t+=dt; d.hitCd-=dt;
-  // 治癒塔回血
+  // 治癒塔回血 + 光束
   const ap=alivePylons();
   if(ap>0)d.hp=Math.min(d.maxHp,d.hp+ap*1.6*dt);
-  // 翅膀
-  const flap=Math.sin(gameTime*7)*0.5;
-  d.wL.rotation.z=flap; d.wR.rotation.z=-flap;
+  for(const py of pylons){
+    if(py.hp<=0)continue;
+    if(!py.tether){py.tether=makeTether();scene.add(py.tether);}
+    const from=py.mesh.position.clone().add(new THREE.Vector3(0,py.top.position.y,0));
+    py.tether.position.copy(from); py.tether.lookAt(dp);
+    py.tether.scale.z=from.distanceTo(dp);
+    py.tether.material.opacity=0.3+Math.sin(gameTime*9+py.phase)*0.2;
+  }
+  // 低血量：水晶轉紅閃爍；平時紫色脈動
+  const low=d.hp/d.maxHp<0.3;
+  const pulse=0.5+Math.sin(gameTime*4)*0.5;
+  for(const c of d.crystals){
+    if(low)c.material.color.setHSL(0.95+Math.sin(gameTime*14)*0.03,1,0.55+pulse*0.2);
+    else c.material.color.lerp(new THREE.Color().setHSL(0.78,0.95,0.62+pulse*0.12),Math.min(1,dt*6));
+  }
+  d.light.intensity=(low?2.2+pulse*1.2:1.3+pulse*0.4);
+  // 翅膀：肩、肘兩關節有相位差；俯衝時後掠
+  const charging=d.state==="charge";
+  const amp=charging?0.22:0.55, spd=charging?11:6.5;
+  const flap=Math.sin(gameTime*spd)*amp, flap2=Math.sin(gameTime*spd-0.9)*amp*0.9;
+  d.wR.shoulder.rotation.z=-flap-(charging?0.35:0); d.wL.shoulder.rotation.z=flap+(charging?0.35:0);
+  d.wR.elbow.rotation.z=-flap2; d.wL.elbow.rotation.z=flap2;
+  d.wR.shoulder.rotation.y=charging?0.5:0.05; d.wL.shoulder.rotation.y=charging?-0.5:-0.05;
+  // 尾巴搖擺、脖子起伏、下顎
+  d.tailSegs.forEach((s,i)=>{s.rotation.y=Math.sin(gameTime*2.6-i*0.7)*0.16;
+    s.rotation.x=Math.sin(gameTime*1.7-i*0.5)*0.07;});
+  d.neck1.rotation.x=-0.25+Math.sin(gameTime*1.3)*0.08+(charging?0.35:0);
+  d.neck2.rotation.x=-0.2+Math.sin(gameTime*1.3+0.6)*0.06;
+  const jawOpen=charging?0.55:(d.breathT<0.45?0.6*(1-d.breathT/0.45):0.05);
+  d.jaw.rotation.x=jawOpen;
   if(d.state==="circle"){
     d.angle+=dt*0.45;
     const tx=arenaPos.x+Math.cos(d.angle)*20;
@@ -1488,24 +1759,29 @@ function updateBoss(dt){
     const to=new THREE.Vector3(tx-dp.x,ty-dp.y,tz-dp.z);
     dp.add(to.multiplyScalar(Math.min(1,dt*2.2)));
     d.g.lookAt(arenaPos.x+Math.cos(d.angle+0.3)*20,ty,arenaPos.z+Math.sin(d.angle+0.3)*20);
+    d.bank+=(0.35-d.bank)*Math.min(1,dt*2); d.g.rotateZ(d.bank);   // 盤旋時側傾
     d.breathT-=dt;
     if(d.breathT<=0){d.breathT=2.5;fireBreath();}
     if(d.t>7){d.state="charge";d.t=0;
       d.chargeDir.set(P.x-dp.x,P.y+1-dp.y,P.z-dp.z).normalize();
-      d.g.lookAt(P.x,P.y+1,P.z); SFX.roar();}
+      d.g.lookAt(P.x,P.y+1,P.z); d.bank=0; SFX.roar();}
   }else{ // charge 俯衝
     dp.add(d.chargeDir.clone().multiplyScalar(17*dt));
+    d.trailT-=dt; if(d.trailT<=0){d.trailT=0.05;spawnParticles(dp.x,dp.y,dp.z-1,[0.75,0.45,1],2);}
     if(Math.hypot(P.x-dp.x,P.z-dp.z)<2.8&&Math.abs(P.y+1-dp.y)<2.5&&d.hitCd<=0){
       d.hitCd=1.2; damage(18,"被巨龍撞擊");
     }
     if(d.t>2.6||dp.y<surfaceY(dp.x,dp.z)+2){d.state="circle";d.t=0;}
   }
   // 王戰 UI
-  document.getElementById("bossFill").style.width=(d.hp/d.maxHp*100)+"%";
+  const pct=d.hp/d.maxHp*100;
+  document.getElementById("bossFill").style.width=pct+"%";
+  document.getElementById("bossGhost").style.width=pct+"%";
+  document.getElementById("bossHpTxt").textContent=`${Math.ceil(d.hp)} / ${d.maxHp}`;
+  document.getElementById("bossBar").classList.toggle("low",low);
   document.getElementById("pylonTag").textContent=
     ap>0?`⚠ 摧毀 ${ap} 座治癒塔以阻止巨龍回血`:"✔ 治癒塔已全毀 —— 全力輸出！";
 }
-
 /* ============ 傷害與藥水 ============ */
 function damage(d,why,dot){
   if(dead||won||P.iframe>0&&!dot)return;
@@ -1537,6 +1813,7 @@ const HOTBAR=[
   {kind:"tool",tool:"axe",ic:"🪓",name:"斧"},
   {kind:"tool",tool:"shovel",ic:"🥄",name:"鏟"},
   {kind:"bow",ic:"🏹",name:"弓",res:"arrow"},
+  {kind:"gun",ic:"🔫",name:"手槍",res:"ammo"},
   {kind:"block",ic:"🕯️",name:"火把",id:B.TORCH,res:"torch"},
   {kind:"block",ic:"🟫",name:"泥土",id:B.DIRT,res:"dirt"},
   {kind:"block",ic:"🪨",name:"石頭",id:B.STONE,res:"stone"},
@@ -1568,8 +1845,9 @@ const RECIPES=[
   {id:"pick1",nm:"⛏ 木鎬（採石/礦 ×2 速）",cost:{wood:5},once:1,ok:()=>P.pickaxe<1,act:()=>P.pickaxe=1},
   {id:"pick2",nm:"⛏ 鐵鎬（×3.5 速）",cost:{iron:3,wood:2},once:1,ok:()=>P.pickaxe<2,act:()=>P.pickaxe=2},
   {id:"pick3",nm:"⛏ 鑽石鎬（×5.5 速）",cost:{diamond:3,wood:2},once:1,ok:()=>P.pickaxe<3,act:()=>P.pickaxe=3},
-  {id:"axe1",nm:"🪓 木斧（伐木加速）",cost:{wood:4},once:1,ok:()=>P.axe<1,act:()=>P.axe=1},
-  {id:"axe2",nm:"🪓 鐵斧",cost:{iron:3,wood:2},once:1,ok:()=>P.axe<2,act:()=>P.axe=2},
+  {id:"axe1",nm:"🪓 木斧（伐木加速 · 重擊 8）",cost:{wood:4},once:1,ok:()=>P.axe<1,act:()=>P.axe=1},
+  {id:"axe2",nm:"🪓 鐵斧（重擊 15）",cost:{iron:3,wood:2},once:1,ok:()=>P.axe<2,act:()=>P.axe=2},
+  {id:"axe3",nm:"🪓 鑽石斧（伐木最快 · 重擊 34）",cost:{diamond:3,wood:2},once:1,ok:()=>P.axe<3,act:()=>P.axe=3},
   {id:"shv1",nm:"🥄 木鏟（挖土/沙加速）",cost:{wood:3},once:1,ok:()=>P.shovel<1,act:()=>P.shovel=1},
   {id:"shv2",nm:"🥄 鐵鏟",cost:{iron:2,wood:2},once:1,ok:()=>P.shovel<2,act:()=>P.shovel=2},
   // 武器
@@ -1577,6 +1855,8 @@ const RECIPES=[
   {id:"sw2",nm:"🗡 鐵劍（傷害 16）",cost:{iron:4,wood:1},once:1,ok:()=>P.sword<2,act:()=>P.sword=2},
   {id:"sw3",nm:"🗡 鑽石劍（傷害 30）",cost:{diamond:3,wood:1},once:1,ok:()=>P.sword<3,act:()=>P.sword=3},
   {id:"bow",nm:"🏹 箭 ×8",cost:{wood:1,stone:1},ok:()=>true,act:()=>counts.arrow+=8},
+  {id:"gun",nm:"🔫 手槍（傷害 22 · 射程 60 · 即時命中）",cost:{iron:6,gold:2,coal:2},once:1,ok:()=>P.gun<1,act:()=>P.gun=1},
+  {id:"ammo",nm:"🔹 子彈 ×12",cost:{iron:1,coal:1},ok:()=>true,act:()=>counts.ammo+=12},
   // 護甲
   {id:"ar1",nm:"🛡 鐵甲（減傷 30%）",cost:{iron:8},once:1,ok:()=>P.armor<1,act:()=>P.armor=1},
   {id:"ar2",nm:"🛡 鑽石甲（減傷 50%）",cost:{diamond:6},once:1,ok:()=>P.armor<2,act:()=>P.armor=2},
@@ -1591,7 +1871,7 @@ const RECIPES=[
   {id:"nv",nm:"🧪 夜視藥水（N 鍵，60 秒）",cost:{gold:1,coal:2},ok:()=>true,act:()=>counts.nv++},
   {id:"app",nm:"🍎 金蘋果（G 鍵，滿血+再生）",cost:{gold:3},ok:()=>true,act:()=>counts.apple++}
 ];
-const RES_NM={wood:"木",stone:"石",coal:"煤",iron:"鐵",gold:"金",diamond:"鑽",sand:"沙",arrow:"箭",torch:"火把",
+const RES_NM={wood:"木",stone:"石",coal:"煤",iron:"鐵",gold:"金",diamond:"鑽",sand:"沙",arrow:"箭",ammo:"子彈",torch:"火把",
   heal:"治療藥水",apple:"金蘋果",glass:"玻璃",brick:"磚塊",plank:"木板",glow:"螢光石",dirt:"泥土"};
 function canAfford(c){return Object.entries(c).every(([k,v])=>counts[k]>=v);}
 function renderCraft(){
@@ -1631,7 +1911,8 @@ const DUSK0=0.55, NIGHT0=0.63, DAWN0=0.82, DAY0=0.90; // 夜晚僅 0.63–0.82 �
 const skyEnd=new THREE.Color(0x0b0716);
 function updateDayNight(dt){
   dayT=(dayT+dt/DAY_LEN)%1;
-  if(DIM===1){scene.background.copy(skyEnd);scene.fog.color.copy(skyEnd);sun.intensity=0.35;amb.intensity=0.5;starMat.opacity=1;return;}
+  if(DIM===1){scene.background.copy(skyEnd);scene.fog.color.copy(skyEnd);sun.intensity=0.3;amb.intensity=0.45;amb.color.setHex(0xc9b0ff);starMat.opacity=1;return;}
+  amb.color.setHex(0xbfd4e6);
   const a=dayT*Math.PI*2;
   sun.position.set(Math.cos(a-Math.PI/2)*60,Math.sin(-(a-Math.PI/2))*60,30);
   let sky=new THREE.Color(), sunI, ambI, starO;
@@ -1667,6 +1948,7 @@ function updateHUD(){
   document.getElementById("cGold").textContent=counts.gold;
   document.getElementById("cDiamond").textContent=counts.diamond;
   document.getElementById("cArrow").textContent=counts.arrow;
+  document.getElementById("cAmmo").textContent=counts.ammo;
   document.getElementById("cPotion").textContent=counts.heal+counts.nv+counts.apple;
   document.getElementById("questLine").textContent=
     dragonDead?"🌀 走進島中央的出口傳送門即可獲勝！":
@@ -1678,8 +1960,8 @@ function updateHUD(){
     ["無護甲","🛡 鐵甲","🛡 鑽石甲"][P.armor]+
     "　🗡 "+["拳","木","鐵","鑽"][P.sword]+
     "　⛏ "+["無","木","鐵","鑽"][P.pickaxe]+
-    "　🪓 "+["無","木","鐵"][P.axe]+
-    "　🥄 "+["無","木","鐵"][P.shovel];
+    "　🪓 "+["無","木","鐵","鑽"][P.axe]+
+    "　🥄 "+["無","木","鐵"][P.shovel]+(P.gun?"　🔫 手槍":"");
   for(let i=0;i<HOTBAR.length;i++){
     const it=HOTBAR[i];
     document.getElementById("hb"+i).textContent=it.res?counts[it.res]:"";
@@ -1763,9 +2045,30 @@ function buildItemMesh(it){
     g.add(box(0.05,0.6,0.05,handle,0,0.1,0));
     if(it.tool==="pickaxe"){g.add(box(0.5,0.07,0.07,head,0,0.38,0));
       g.add(box(0.07,0.12,0.07,head,-0.22,0.32,0));g.add(box(0.07,0.12,0.07,head,0.22,0.32,0));}
-    else if(it.tool==="axe"){g.add(box(0.2,0.22,0.06,head,0.1,0.34,0));}
+    else if(it.tool==="axe"){
+      const dia=tier===3, hm=dia?M(TIER_COL[3],0x0f4f55):head;
+      g.add(box(0.1,0.2,0.07,hm,0.06,0.36,0));                  // 斧頸
+      g.add(box(0.14,0.3,0.05,hm,0.17,0.35,0));                 // 斧刃
+      g.add(box(0.04,0.36,0.055,dia?M(0xdffcff,0x2a8f99):M(0xf2f2f2),0.25,0.35,0)); // 刃口亮邊
+      g.add(box(0.07,0.1,0.07,hm,-0.05,0.38,0));                // 斧背
+      if(dia){g.add(box(0.06,0.06,0.075,new THREE.MeshBasicMaterial({color:0xb8fbff}),0.15,0.42,0));}
+    }
     else{g.add(box(0.16,0.2,0.04,head,0,0.44,0));}
     g.rotation.set(-0.7,0.1,0.4);
+  }else if(it.kind==="gun"){
+    if(P.gun<1)return g;
+    const steel=M(0x3b4250), dark=M(0x22262e), grip=M(0x5a3d22), gold=M(0xd9b44a,0x2a1d00);
+    g.add(box(0.075,0.085,0.44,steel,0,0.05,-0.12));            // 滑套
+    g.add(box(0.06,0.05,0.4,dark,0,-0.015,-0.1));               // 槍管下緣
+    g.add(box(0.03,0.03,0.05,dark,0,0.105,-0.31));              // 準星
+    g.add(box(0.05,0.03,0.04,dark,0,0.105,0.07));               // 照門
+    const gp=box(0.065,0.22,0.1,grip,0,-0.13,0.05); gp.rotation.x=0.28; g.add(gp);   // 握把
+    g.add(box(0.012,0.06,0.07,dark,0,-0.06,-0.04));             // 扳機護弓
+    g.add(box(0.077,0.012,0.3,gold,0,0.02,-0.12));              // 金色飾條
+    const flash=box(0.14,0.14,0.14,new THREE.MeshBasicMaterial({color:0xffd27a,transparent:true,opacity:0.95}),0,0.05,-0.4);
+    flash.rotation.z=Math.PI/4; flash.visible=false; g.add(flash); g.userData.flash=flash;
+    g.rotation.set(0.1,0.12,0);
+    g.position.set(-0.04,0.2,0.08); g.scale.setScalar(1.15);
   }else if(it.kind==="bow"){
     const wood=M(0x8a5a2a);
     g.add(box(0.05,0.32,0.05,wood,0,0,0));
@@ -1788,11 +2091,14 @@ function buildItemMesh(it){
 const VM={
   root:new THREE.Group(), holder:new THREE.Group(),
   swingT:0,swingAmt:1,switchT:0,bob:0,mining:false,retrig:0,
+  recoilT:0,flash:null,
   swing(amt){ if(this.swingT<=0.12){this.swingT=0.3;this.swingAmt=amt;} },
+  fire(){ this.recoilT=0.16; if(this.flash){this.flash.visible=true;this.flash.rotation.x=Math.random()*3;} this.light.intensity=2.5; },
   switchItem(){ this.switchT=0.2; this.rebuild(); },
   rebuild(){
     while(this.holder.children.length)this.holder.remove(this.holder.children[0]);
-    this.holder.add(buildItemMesh(HOTBAR[selSlot]));
+    const m=buildItemMesh(HOTBAR[selSlot]); this.holder.add(m);
+    this.flash=m.userData.flash||null;
   },
   update(dt){
     // 挖掘中持續揮動
@@ -1816,6 +2122,14 @@ const VM={
       r.rotation.x-=s*1.15; r.rotation.y+=s*0.55; r.rotation.z-=s*0.3;
       r.position.z-=s*0.22; r.position.y-=s*0.12; r.position.x-=s*0.12;
     }
+    // 開槍後座力 + 槍口火光
+    if(this.recoilT>0){
+      this.recoilT=Math.max(0,this.recoilT-dt);
+      const k=this.recoilT/0.16;
+      r.rotation.x+=k*0.38; r.position.z+=k*0.14; r.position.y+=k*0.03;
+      if(this.flash&&this.recoilT<0.11)this.flash.visible=false;
+    }
+    this.light.intensity=Math.max(0,this.light.intensity-dt*30);
     vmAmb.intensity=Math.min(1.1,amb.intensity*1.3+0.3);
   }
 };
@@ -1826,6 +2140,7 @@ const VM={
   VM.root.add(arm,cuff);
   VM.holder.position.set(0.02,0.06,-0.3);
   VM.root.add(VM.holder);
+  VM.light=new THREE.PointLight(0xffc860,0,2.5); VM.light.position.set(0,0.2,-0.85); VM.root.add(VM.light);
   vmScene.add(VM.root);
   VM.rebuild();
 })();
@@ -1885,7 +2200,7 @@ function collectSave(){
   return {
     v:3, t:Math.floor(gameTime), dayT,
     player:{x:P.x,y:P.y,z:P.z,yaw:P.yaw,pitch:P.pitch,hp:P.hp,
-      pickaxe:P.pickaxe,axe:P.axe,shovel:P.shovel,sword:P.sword,armor:P.armor,
+      pickaxe:P.pickaxe,axe:P.axe,shovel:P.shovel,sword:P.sword,armor:P.armor,gun:P.gun,
       nightVision:P.nightVision,regen:P.regen,kills:P.kills},
     counts:{...counts},
     // 方塊差異壓成陣列 [key,id]
@@ -1922,6 +2237,7 @@ function applySave(s){
     if(id===B.TORCH){const[x,y,z]=k.split(",").map(Number);const keep=DIM;DIM=dim;addTorchMesh(x,y,z);DIM=keep;}
   }
   // 2) 玩家狀態
+  P.gun=0; counts.ammo=0;   // 舊存檔沒有這兩項 → 歸零
   Object.assign(P,s.player); P.iframe=1; P.vx=P.vy=P.vz=0;
   Object.assign(counts,s.counts);
   gameTime=s.t||0; dayT=s.dayT!=null?s.dayT:0.12;
@@ -1935,13 +2251,14 @@ function applySave(s){
   const q=s.quest||{};
   // 清掉現存的龍與塔，依存檔重建
   if(dragon){scene.remove(dragon.g);dragon=null;}
-  for(const py of pylons)scene.remove(py.mesh);
+  if(dyingDragon){scene.remove(dyingDragon.g);dyingDragon=null;}
+  for(const py of pylons){scene.remove(py.mesh);if(py.tether)scene.remove(py.tether);}
   pylons.length=0;
   breaths.forEach(b=>scene.remove(b.m)); breaths.length=0;
   puddles.forEach(p=>scene.remove(p.m)); puddles.length=0;
   enemies.forEach(e=>scene.remove(e.g)); enemies.length=0;
   portalActive=!!q.portalActive; bossSpawned=false; dragonDead=!!q.dragonDead;
-  document.getElementById("bossWrap").style.display="none";
+  document.getElementById("bossWrap").style.display="none"; document.body.classList.remove("boss");
   DIM=0; resetChunks();
   if(portalActive)activatePortal();           // 主世界傳送門（冪等）
   DIM=q.dim||0; resetChunks();
@@ -1952,8 +2269,7 @@ function applySave(s){
     if(q.dragonHp!=null&&dragon)dragon.hp=q.dragonHp;
     if(q.pylons)pylons.forEach((py,i)=>{
       if(q.pylons[i]!=null){py.hp=q.pylons[i];
-        if(py.hp<=0){py.top.material.color.setHex(0x333333);
-          py.mesh.children[0].material.color.setHex(0x222222);}}
+        if(py.hp<=0)pylonDestroyedVisual(py);}
     });
   }
   // 5) 區塊全部丟掉，依存檔差異重新生成
@@ -1995,6 +2311,7 @@ function loop(){
     updateEnemies(dt);
     updateBoss(dt);
     updateArrows(dt);
+    updateWeapons(dt);
     updateParticles(dt);
     updateDayNight(dt);
     checkWin();
@@ -2004,6 +2321,10 @@ function loop(){
     for(const t of torches)t.flame.scale.setScalar(0.9+Math.sin(gameTime*9+t.x)*0.18);
     // 水晶光柱旋轉
     for(const c of crystals)if(!c.taken)c.beam.rotation.y+=dt*0.8;
+    // 終界光塵緩緩上飄
+    if(DIM===1){const a=moteGeo.attributes.position;
+      for(let i=1;i<a.count*3;i+=3){a.array[i]+=dt*0.6;if(a.array[i]>56)a.array[i]=22;}
+      a.needsUpdate=true; moteMat.opacity=0.55+Math.sin(gameTime*1.5)*0.2;}
     waterUni.uTime.value=gameTime;
     updateHUD();
   }
