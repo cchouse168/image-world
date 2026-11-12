@@ -161,7 +161,9 @@
   #tTop{position:fixed;top:14px;right:calc(14px + env(safe-area-inset-right));z-index:16;display:none;gap:8px;}
   body.touch #tTop{display:flex;}
   #tTop .tb{position:static;}
-  body.touch #hotbar{max-width:92vw;overflow-x:auto;bottom:10px;}
+  body.touch #hotbar{max-width:92vw;overflow-x:auto;bottom:10px;z-index:17;touch-action:pan-x;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  body.touch #hotbar::-webkit-scrollbar{display:none;}
   body.touch .slot{width:40px;height:44px;flex:none;}
   body.touch .slot .ic{font-size:15px;}
   body.touch .slot span:nth-child(3){font-size:9px;}
@@ -2181,7 +2183,14 @@ const VM={
   tap("tbSave",()=>{if(started&&!won)saveGame();});
   tap("tbLoad",()=>{if(started)loadGame();});
   tap("tbPause",()=>{if(!started||dead||won||menuOpen)return;locked=false;show("pauseOv",true);});
-  [...hotbarEl.children].forEach((c,i)=>c.addEventListener("touchstart",e=>{e.preventDefault();selectSlot(i);},{passive:false}));
+  // 快捷欄：點一下切換；左右拖曳則捲動（觸控區 z-index 已讓出）
+  let hbX=0,hbY=0,hbMoved=false;
+  hotbarEl.addEventListener("touchstart",e=>{const t=e.changedTouches[0];hbX=t.clientX;hbY=t.clientY;hbMoved=false;},{passive:true});
+  hotbarEl.addEventListener("touchmove",e=>{const t=e.changedTouches[0];
+    if(Math.hypot(t.clientX-hbX,t.clientY-hbY)>10)hbMoved=true;},{passive:true});
+  [...hotbarEl.children].forEach((c,i)=>c.addEventListener("touchend",e=>{
+    if(hbMoved)return; e.preventDefault(); audio(); selectSlot(i);
+    c.scrollIntoView({block:"nearest",inline:"nearest"});},{passive:false}));
 })();
 
 /* ============ 存檔 / 讀檔（F5 存、F9 讀） ============ */
