@@ -173,6 +173,22 @@
   body.touch #crosshair{width:16px;height:16px;}
   body.touch #mineBar{top:55%;}
   #orientHint{display:none;font-size:12px;color:#8aa0ad;margin-top:10px;}
+  /* ===== 多人連線 ===== */
+  input{-webkit-user-select:text;user-select:text;}
+  #mpBox{margin-top:16px;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.14);display:flex;flex-direction:column;gap:10px;align-items:center;}
+  #mpBox .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;}
+  #mpBox label{font-size:13px;color:#9fb6c2;}
+  #mpBox input{padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.25);
+    background:rgba(0,0,0,.35);color:#fff;font-size:16px;width:120px;text-align:center;}
+  #mpBox input#mpCode{width:96px;letter-spacing:4px;}
+  #mpBox .btn{margin-top:0;padding:9px 18px;font-size:14px;}
+  #mpBox .btn.alt{background:linear-gradient(135deg,#6b3fa0,#9a5bd6);box-shadow:0 0 14px rgba(154,91,214,.45);}
+  #mpMsg{font-size:13px;color:#ffd86b;min-height:18px;}
+  #netBadge{position:fixed;top:64px;right:calc(14px + env(safe-area-inset-right));z-index:16;display:none;
+    padding:5px 10px;border-radius:8px;background:rgba(0,0,0,.5);color:#bfe9ff;font-size:12px;
+    pointer-events:none;text-shadow:0 1px 2px #000;line-height:1.5;text-align:right;}
+  body:not(.touch) #netBadge{top:14px;}
   body.touch #orientHint{display:block;}
 </style>
 </head>
@@ -218,6 +234,7 @@
   <button class="tb sm" id="tbPause" title="暫停">⏸</button>
 </div>
 <div id="toast"></div>
+<div id="netBadge"></div>
 <div id="dmgFlash"></div>
 
 <div id="craftOv"><div id="craftBox" class="panel">
@@ -239,7 +256,17 @@
     Tab 合成選單　H/N/G 使用藥水　夜晚會有暗影怪出沒，火把能驅趕它們<br>
     <b style="color:#ffd86b">F5 存檔　·　F9 讀檔</b>（進度會保留，下次打開可繼續）
   </p>
-  <button class="btn" id="startBtn">點擊開始</button>
+  <button class="btn" id="startBtn">單人開始</button>
+  <div id="mpBox">
+    <div class="row"><label>👥 多人連線（同一個 Wi-Fi）　名字</label><input id="mpName" maxlength="10"></div>
+    <div class="row">
+      <button class="btn" id="mpHostBtn">建立房間</button>
+      <span style="color:#7d8f9a">或</span>
+      <input id="mpCode" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="房號">
+      <button class="btn alt" id="mpJoinBtn">加入房間</button>
+    </div>
+    <div id="mpMsg"></div>
+  </div>
   <div id="orientHint">📱 手機版：左側搖桿移動、右側拖曳轉視角；建議橫向持機，並「加入主畫面」以全螢幕遊玩</div>
 </div>
 
@@ -1185,6 +1212,7 @@ function setBlock(x,y,z,id){
   editSet(x,y,z,id); // 記錄差異供存檔
   if(id===B.GLOW)glows.add(k); else glows.delete(k);
   markDirty(x,z);
+  if(typeof NET!=="undefined"&&NET.on&&!NET.mute)NET.send({t:"b",x,y,z,id,d:DIM});
 }
 function updateMining(dt){
   const bar=document.getElementById("mineBar"),fill=document.getElementById("mineFill");
@@ -1207,8 +1235,9 @@ function updateMining(dt){
       const c=crystals.find(c=>c.x===x&&c.y===y&&c.z===z);
       if(c&&!c.taken){c.taken=true;scene.remove(c.beam);}
       counts.crystal++; SFX.chime();
+      if(NET.on){counts.crystal=crystals.filter(c=>c.taken).length;if(c)NET.send({t:"cr",i:crystals.indexOf(c)});}
       toast(`🔮 取得 Lumen 水晶（${counts.crystal} / 5）`);
-      if(counts.crystal>=5)activatePortal();
+      if(counts.crystal>=5&&!portalActive)activatePortal();
     }else if(NEEDS_PICK.has(id)&&(heldTool()!=="pickaxe"||P.pickaxe<1)){
       toast("需要手持鎬才能採集這種礦石");
     }else if(YIELD[id])counts[YIELD[id]]++;
@@ -1636,6 +1665,7 @@ function hurtDragon(dmg){
   for(const c of dragon.crystals)c.material.color.setHex(0xffffff);
   if(dragon.hp<=0){
     dragonDead=true; SFX.roar();
+    if(NET.on&&!NET.mute)NET.send({t:"dragon"});
     for(const py of pylons)if(py.tether){scene.remove(py.tether);py.tether=null;}
     dyingDragon={g:dragon.g,d:dragon,t:0,vy:0};
     dragon=null;
@@ -2300,16 +2330,266 @@ function applySave(s){
 }
 
 async function loadGame(){
+  if(NET.on&&!NET.host){toast("多人模式中只有房主可以讀檔");return;}
   const raw=await storeGet(SAVE_KEY);
   if(!raw){toast("找不到存檔（先按 F5 存檔）");return;}
-  try{applySave(JSON.parse(raw));toast("📂 已讀取存檔");SFX.chime();}
-  catch(e){toast("讀檔失敗：存檔損毀");console.error(e);}
+  try{NET.mute=true;applySave(JSON.parse(raw));NET.mute=false;toast("📂 已讀取存檔");SFX.chime();
+    if(NET.on)NET.resync();}
+  catch(e){NET.mute=false;toast("讀檔失敗：存檔損毀");console.error(e);}
 }
 
 document.addEventListener("keydown",e=>{
   if(e.code==="F5"){e.preventDefault(); if(started&&!won)saveGame(); return;}
   if(e.code==="F9"){e.preventDefault(); if(started)loadGame(); return;}
 });
+
+/* ============ 多人連線（PeerJS / WebRTC P2P，星狀：房主轉發） ============ */
+const NET={on:false,host:false,mute:false,peer:null,conns:new Map(),hostConn:null,
+  myId:"",code:"",players:new Map(),sendT:0,
+  send(m){ if(!this.on)return; m.from=this.myId;
+    if(this.host){for(const c of this.conns.values())if(c.open)c.send(m);}
+    else if(this.hostConn&&this.hostConn.open)this.hostConn.send(m); },
+  update(dt,running){
+    this.sendT-=dt;
+    // 心跳逾時：對方關頁 / 切背景 / 斷 Wi-Fi 時，WebRTC 可能很久才回報斷線 → 8 秒沒收到就當離線
+    const now=performance.now();
+    if(this.host){for(const[id,c]of this.conns)if(now-(c._seen||now)>8000){c._seen=now;try{c.close();}catch(e){} hostDrop(id);}}
+    else if(this.hostConn&&now-(this.hostConn._seen||now)>8000)clientLost();
+    if(this.sendT<=0){this.sendT=0.1;
+      const m={t:"p",x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),yaw:+P.yaw.toFixed(3),
+        pitch:+P.pitch.toFixed(3),d:DIM,sw:mouseDown?1:0,dead:dead?1:0};
+      if(this.host)m.day=+dayT.toFixed(4);
+      this.send(m);}
+    for(const pl of this.players.values())avatarUpdate(pl,dt);
+    updateNetBadge();
+  },
+  resync(){ if(!this.host)return; this.send({t:"state",s:hostState()}); }
+};
+const MP_PREFIX="vxlumen-";
+const AV_COLORS=[0x3fa7d6,0xe0603a,0x59c25a,0xd6b13f,0xb05bd6,0xe05c9a];
+function mpQS(k){ try{return new URLSearchParams(location.search).get(k);}catch(e){return null;} }
+function peerOpts(){
+  const o={debug:0}; const h=mpQS("peerhost");
+  if(h){o.host=h;o.port=+(mpQS("peerport")||9000);o.path=mpQS("peerpath")||"/";o.secure=mpQS("peersecure")==="1";}
+  return o;
+}
+function loadPeerJS(){
+  if(window.Peer)return Promise.resolve();
+  return new Promise((ok,bad)=>{const sc=document.createElement("script");
+    sc.src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"; sc.onload=()=>ok(); sc.onerror=()=>bad(new Error("load"));
+    document.head.appendChild(sc);});
+}
+function mpMsg(t){document.getElementById("mpMsg").textContent=t;}
+function mpName(){ const v=(document.getElementById("mpName").value||"").trim().slice(0,10);
+  const n=v||(TOUCH?"iPad":"PC"); try{localStorage.setItem("voxel_mp_name",n);}catch(e){} return n; }
+try{document.getElementById("mpName").value=localStorage.getItem("voxel_mp_name")||(TOUCH?"iPad":"PC");}catch(e){}
+function setMpButtons(dis){for(const id of["mpHostBtn","mpJoinBtn","startBtn"])document.getElementById(id).disabled=dis;}
+function hostState(){
+  return {edits:[...allEdits()],crystals:crystals.map(c=>c.taken),portalActive,dragonDead,dayT,
+    hostPos:{x:P.x,y:P.y,z:P.z,d:DIM}};
+}
+function startGame(){ started=true; show("startOv",false); audio(); lock(); }
+
+/* ---- 遠端玩家方塊人 ---- */
+function makeNameTag(name,col){
+  const cv=document.createElement("canvas"); cv.width=256; cv.height=64; const g=cv.getContext("2d");
+  g.fillStyle="rgba(0,0,0,.55)"; g.fillRect(0,8,256,48);
+  g.font="bold 32px 'Microsoft JhengHei',sans-serif"; g.textAlign="center"; g.textBaseline="middle";
+  g.fillStyle="#"+col.toString(16).padStart(6,"0"); g.fillText(name,128,33);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false,transparent:true}));
+  sp.scale.set(1.6,0.4,1); sp.position.y=2.25; sp.renderOrder=10; return sp;
+}
+function makeAvatar(name,col){
+  const g=new THREE.Group(), skin=M(0xe8b88a), shirt=M(col), pants=M(0x2d3a58);
+  const legL=new THREE.Group(),legR=new THREE.Group(),armL=new THREE.Group(),armR=new THREE.Group(),head=new THREE.Group();
+  legL.position.set(-0.13,0.72,0); legR.position.set(0.13,0.72,0);
+  legL.add(box(0.24,0.72,0.26,pants,0,-0.36,0)); legR.add(box(0.24,0.72,0.26,pants,0,-0.36,0));
+  armL.position.set(-0.37,1.36,0); armR.position.set(0.37,1.36,0);
+  armL.add(box(0.2,0.66,0.22,skin,0,-0.3,0)); armR.add(box(0.2,0.66,0.22,skin,0,-0.3,0));
+  head.position.set(0,1.42,0); head.add(box(0.46,0.46,0.46,skin,0,0.23,0));
+  head.add(box(0.48,0.14,0.48,shirt,0,0.42,0));               // 帽子（玩家色）
+  head.add(box(0.08,0.08,0.02,M(0x222222),-0.1,0.26,-0.235)); head.add(box(0.08,0.08,0.02,M(0x222222),0.1,0.26,-0.235));
+  g.add(box(0.5,0.68,0.28,shirt,0,1.06,0),legL,legR,armL,armR,head,makeNameTag(name,col));
+  g.userData={legL,legR,armL,armR,head}; g.visible=false; scene.add(g); return g;
+}
+function addPlayer(id,name,ci){
+  if(id===NET.myId||NET.players.has(id))return;
+  const col=AV_COLORS[(ci||0)%AV_COLORS.length];
+  NET.players.set(id,{id,name,ci,col,g:makeAvatar(name,col),tx:0,ty:-999,tz:0,yaw:0,pitch:0,d:0,sw:0,dead:0,has:false,walk:0});
+}
+function removePlayer(id){ const pl=NET.players.get(id); if(!pl)return; scene.remove(pl.g); NET.players.delete(id); }
+function avatarUpdate(pl,dt){
+  const g=pl.g; g.visible=pl.has&&pl.d===DIM&&!pl.dead;
+  if(!g.visible)return;
+  const k=Math.min(1,dt*12), ox=g.position.x, oz=g.position.z;
+  if(g.position.y<-900||Math.hypot(pl.tx-ox,pl.tz-oz)>12){g.position.set(pl.tx,pl.ty,pl.tz);}
+  else{g.position.x+=(pl.tx-ox)*k; g.position.y+=(pl.ty-g.position.y)*k; g.position.z+=(pl.tz-oz)*k;}
+  let dy=pl.yaw-g.rotation.y; dy=Math.atan2(Math.sin(dy),Math.cos(dy)); g.rotation.y+=dy*k;
+  const sp=Math.hypot(g.position.x-ox,g.position.z-oz)/Math.max(dt,1e-3);
+  pl.walk+=dt*Math.min(sp,6)*1.8;
+  const amp=Math.min(1,sp/3)*0.7, u=g.userData;
+  u.legL.rotation.x=Math.sin(pl.walk)*amp; u.legR.rotation.x=-Math.sin(pl.walk)*amp;
+  u.armL.rotation.x=-Math.sin(pl.walk)*amp;
+  u.armR.rotation.x=pl.sw?-1.2+Math.sin(performance.now()/60)*0.6:Math.sin(pl.walk)*amp;
+  u.head.rotation.x=-pl.pitch*0.8;
+}
+function updateNetBadge(){
+  const el=document.getElementById("netBadge");
+  if(!NET.on){el.style.display="none";return;}
+  el.style.display="block";
+  const names=[...NET.players.values()].map(p=>p.name+(p.d!==DIM?"（"+(p.d?"終界":"主世界")+"）":""));
+  el.innerHTML=`🌐 房號 <b>${NET.code}</b>${NET.host?"（房主）":""} · ${NET.players.size+1} 人<br>${names.length?"同伴："+names.join("、"):"等待同伴加入…"}`;
+}
+
+/* ---- 套用遠端事件 ---- */
+function applyRemoteBlock(x,y,z,id,d){
+  if(y<0||y>MAXY)return;
+  editSet(x,y,z,id,d);
+  if(d!==DIM)return;
+  const c=getChunk(x>>4,z>>4); if(!c)return;          // 未載入的區塊：生成時會重放 edits
+  const old=c.data[cidx(x&15,y,z&15)]; if(old===id)return;
+  c.data[cidx(x&15,y,z&15)]=id; if(y>c.maxY)c.maxY=y;
+  const k=K(x,y,z); if(id===B.GLOW)glows.add(k); else glows.delete(k);
+  if(old===B.TORCH&&id!==B.TORCH){const i=torches.findIndex(t=>t.x===x&&t.y===y&&t.z===z&&t.dim===DIM);
+    if(i>=0){scene.remove(torches[i].mesh);torches.splice(i,1);}}
+  if(id===B.TORCH&&!torches.some(t=>t.x===x&&t.y===y&&t.z===z&&t.dim===DIM))addTorchMesh(x,y,z);
+  markDirty(x,z);
+}
+function applyRemoteCrystal(i,who){
+  const c=crystals[i]; if(!c||c.taken)return;
+  c.taken=true; if(c.beam)scene.remove(c.beam);
+  applyRemoteBlock(c.x,c.y,c.z,B.AIR,0);
+  counts.crystal=crystals.filter(c=>c.taken).length;
+  SFX.chime(); toast(`🔮 ${who} 取得 Lumen 水晶（${counts.crystal} / 5）`);
+  if(counts.crystal>=5&&!portalActive){NET.mute=true;activatePortal();NET.mute=false;}
+}
+function applyRemoteDragon(who){
+  if(dragonDead)return;
+  NET.mute=true;
+  if(dragon&&DIM===1)hurtDragon(dragon.hp+1);
+  else{dragonDead=true; if(DIM===1&&exitCells.length)fillExitPortal();}
+  NET.mute=false;
+  toast(`🐉 ${who} 擊敗了流明巨龍！出口傳送門已開啟`);
+}
+// 用房主的世界狀態覆蓋：保留自己的背包 / 血量 / 維度，世界差異與任務進度跟房主一致
+function applyHostState(st,teleport){
+  const s=collectSave();
+  s.edits=st.edits; s.crystals=st.crystals; s.dayT=st.dayT;
+  s.quest.portalActive=st.portalActive; s.quest.dragonDead=s.quest.dragonDead||st.dragonDead;
+  if(teleport&&st.hostPos&&st.hostPos.d===0&&DIM===0){s.player.x=st.hostPos.x+1.2;s.player.z=st.hostPos.z;s.player.y=st.hostPos.y+0.6;}
+  NET.mute=true; try{applySave(s);}finally{NET.mute=false;}
+  counts.crystal=crystals.filter(c=>c.taken).length;
+  syncDimVisuals(); updateHUD();
+}
+function nameOf(id){ const p=NET.players.get(id); return p?p.name:"同伴"; }
+function onNetMsg(m,conn){
+  if(!m||!m.t)return;
+  if(NET.host&&conn){        // 房主：轉發給其他人
+    m.from=conn.peer;
+    if(m.t==="b"||m.t==="p"||m.t==="cr"||m.t==="dragon")
+      for(const[id,c]of NET.conns)if(id!==conn.peer&&c.open)c.send(m);
+  }
+  const from=m.from;
+  switch(m.t){
+    case "p":{ const pl=NET.players.get(from); if(!pl)break;
+      pl.tx=m.x;pl.ty=m.y;pl.tz=m.z;pl.yaw=m.yaw;pl.pitch=m.pitch;pl.d=m.d;pl.sw=m.sw;pl.dead=m.dead;pl.has=true;
+      if(!NET.host&&m.day!=null){let df=m.day-dayT; if(Math.abs(df)>0.01)dayT=m.day;}
+      break;}
+    case "b": NET.mute=true; applyRemoteBlock(m.x,m.y,m.z,m.id,m.d); NET.mute=false; break;
+    case "cr": applyRemoteCrystal(m.i,nameOf(from)); break;
+    case "dragon": applyRemoteDragon(nameOf(from)); break;
+    case "join": addPlayer(m.id,m.name,m.ci); toast(`👋 ${m.name} 加入了遊戲`); break;
+    case "leave": { const n=nameOf(m.id); removePlayer(m.id); toast(`👋 ${n} 離開了遊戲`); break; }
+    case "state": applyHostState(m.s,false); toast("🔄 房主讀取了存檔，世界已同步"); break;
+    case "hello": break;  // 由 host 端連線處理
+  }
+}
+
+function hostDrop(id){
+  if(!NET.conns.has(id))return; NET.conns.delete(id);
+  const n=nameOf(id); removePlayer(id); toast(`👋 ${n} 離線了`);
+  for(const c of NET.conns.values())if(c.open)c.send({t:"leave",from:NET.myId,id});
+}
+function clientLost(){
+  if(!NET.on)return;
+  NET.on=false; const c=NET.hostConn; NET.hostConn=null;
+  try{c&&c.close();}catch(e){} try{NET.peer&&NET.peer.destroy();}catch(e){}
+  for(const id of[...NET.players.keys()])removePlayer(id);
+  toast("⚠ 與房主的連線中斷，改為單人遊玩"); updateNetBadge();
+}
+addEventListener("pagehide",()=>{ try{if(NET.peer)NET.peer.destroy();}catch(e){} });
+/* ---- 房主 ---- */
+async function mpHost(){
+  setMpButtons(true); mpMsg("連線中…");
+  try{await loadPeerJS();}catch(e){mpMsg("❌ 無法載入連線元件（需要網路）");setMpButtons(false);return;}
+  let tries=0, nextCi=1;
+  const open=()=>{
+    const code=String(Math.floor(1000+Math.random()*9000));
+    const peer=new Peer(MP_PREFIX+code,peerOpts());
+    peer.on("open",id=>{
+      NET.on=true;NET.host=true;NET.peer=peer;NET.myId=id;NET.code=code;NET.myName=mpName();
+      mpMsg("");startGame();toast(`🌐 房間已建立，房號 ${code} —— 另一台輸入房號加入`);
+    });
+    peer.on("connection",conn=>{
+      conn.on("data",m=>{
+        conn._seen=performance.now();
+        if(m&&m.t==="hello"){
+          const ci=nextCi++;
+          const list=[{id:NET.myId,name:NET.myName,ci:0},...[...NET.players.values()].map(p=>({id:p.id,name:p.name,ci:p.ci}))];
+          NET.conns.set(conn.peer,conn);
+          conn.send({t:"welcome",from:NET.myId,you:ci,players:list,s:hostState()});
+          for(const[id,c]of NET.conns)if(id!==conn.peer&&c.open)c.send({t:"join",from:NET.myId,id:conn.peer,name:m.name,ci});
+          addPlayer(conn.peer,m.name,ci); toast(`👋 ${m.name} 加入了遊戲`);
+          return;
+        }
+        if(NET.conns.has(conn.peer))onNetMsg(m,conn);
+      });
+      const gone=()=>hostDrop(conn.peer);
+      conn.on("close",gone); conn.on("error",gone);
+    });
+    peer.on("disconnected",()=>{ if(!peer.destroyed)setTimeout(()=>{try{peer.reconnect();}catch(e){}},1500); });
+    peer.on("error",e=>{
+      if(e.type==="unavailable-id"&&tries++<5){peer.destroy();open();return;}
+      if(!NET.on){mpMsg("❌ 建立房間失敗："+(e.type||e.message));setMpButtons(false);}
+      else console.warn("peer:",e);
+    });
+  };
+  open();
+}
+
+/* ---- 加入 ---- */
+async function mpJoin(){
+  const code=(document.getElementById("mpCode").value||"").replace(/\D/g,"");
+  if(code.length!==4){mpMsg("請輸入 4 位數房號");return;}
+  setMpButtons(true); mpMsg("連線中…");
+  try{await loadPeerJS();}catch(e){mpMsg("❌ 無法載入連線元件（需要網路）");setMpButtons(false);return;}
+  const peer=new Peer(undefined,peerOpts()); let done=false;
+  const fail=t=>{ if(done)return; done=true; mpMsg("❌ "+t); setMpButtons(false); try{peer.destroy();}catch(e){} };
+  const timer=setTimeout(()=>fail("連線逾時，請確認房號與兩台在同一個 Wi-Fi"),15000);
+  peer.on("open",id=>{
+    const conn=peer.connect(MP_PREFIX+code,{reliable:true,serialization:"json"});
+    conn.on("open",()=>conn.send({t:"hello",name:mpName()}));
+    conn.on("data",m=>{
+      conn._seen=performance.now();
+      if(m&&m.t==="welcome"){
+        if(done)return; done=true; clearTimeout(timer);
+        NET.on=true;NET.host=false;NET.peer=peer;NET.hostConn=conn;NET.myId=id;NET.code=code;NET.myName=mpName();
+        for(const p of m.players)addPlayer(p.id,p.name,p.ci);
+        applyHostState(m.s,true);
+        mpMsg(""); startGame(); toast(`🌐 已加入房間 ${code}`);
+        return;
+      }
+      if(NET.on)onNetMsg(m,null);
+    });
+    conn.on("close",()=>{ if(!NET.on)return fail("連線中斷"); clientLost(); });
+  });
+  peer.on("error",e=>{
+    if(e.type==="peer-unavailable")fail(`找不到房間 ${code}`);
+    else if(!NET.on)fail("連線失敗："+(e.type||e.message));
+  });
+}
+document.getElementById("mpHostBtn").onclick=()=>mpHost();
+document.getElementById("mpJoinBtn").onclick=()=>mpJoin();
 
 
 const clock=new THREE.Clock();
@@ -2348,6 +2628,7 @@ function loop(){
     updateHUD();
   }
   if(!running&&started)updateChunks(P.x,P.z,1,2);
+  if(started&&NET.on)NET.update(dt,running);
   renderer.clear();
   renderer.render(scene,camera);
   renderer.clearDepth();
