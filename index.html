@@ -1045,15 +1045,25 @@ function show(id,on){document.getElementById(id).style.display=on?"flex":"none";
 const TOUCH=("ontouchstart" in window)||(window.matchMedia&&matchMedia("(pointer:coarse)").matches);
 if(TOUCH)document.body.classList.add("touch");
 const touchMove={x:0,z:0,run:false};
+// iPad / iPhone Safari 沒有 Pointer Lock API（exitPointerLock 為 undefined），
+// 直接呼叫會丟 TypeError，導致死亡/勝利畫面出不來而卡死 → 一律走安全包裝
+function unlockPointer(){
+  try{ if(document.exitPointerLock&&document.pointerLockElement)document.exitPointerLock(); }catch(e){}
+}
+function releaseInputs(){
+  mouseDown=false; mining=null; keys.Space=false;
+  touchMove.x=touchMove.z=0; touchMove.run=false;
+}
 function lock(){
   if(TOUCH){locked=true;show("pauseOv",false);return;}
-  renderer.domElement.requestPointerLock();
+  try{ const r=renderer.domElement.requestPointerLock&&renderer.domElement.requestPointerLock();
+    if(r&&r.catch)r.catch(()=>{}); }catch(e){}
 }
 document.getElementById("startBtn").onclick=()=>{started=true;show("startOv",false);audio();lock();
   toast("跟隨羅盤尋找 Lumen 水晶 🔮");};
 document.getElementById("resumeBtn").onclick=()=>lock();
 document.getElementById("respawnBtn").onclick=()=>{
-  dead=false;P.hp=P.maxHp;
+  dead=false;releaseInputs();P.hp=P.maxHp;
   if(DIM===1){P.x=0.5;P.z=10.5;}else{P.x=SPAWN.x+0.5;P.z=SPAWN.z+0.5;}
   warmup(P.x,P.z,1);P.y=surfaceY(P.x,P.z)+1.05;
   P.vx=P.vy=P.vz=0;P.iframe=2;show("deathOv",false);lock();};
@@ -1793,7 +1803,7 @@ function damage(d,why,dot){
     const f=document.getElementById("dmgFlash");
     f.style.opacity=1;setTimeout(()=>f.style.opacity=0,140);}
   if(P.hp<=0&&!dead){
-    dead=true;document.exitPointerLock();
+    dead=true;releaseInputs();unlockPointer();
     document.getElementById("deathInfo").textContent=
       `${why||"陣亡"} · 擊殺 ${P.kills} · 水晶 ${counts.crystal}/5`;
     show("deathOv",true);
@@ -1899,7 +1909,7 @@ function renderCraft(){
 function toggleCraft(){
   menuOpen=!menuOpen;
   document.getElementById("craftOv").style.display=menuOpen?"flex":"none";
-  if(menuOpen){renderCraft();document.exitPointerLock();show("pauseOv",false);}
+  if(menuOpen){releaseInputs();renderCraft();unlockPointer();show("pauseOv",false);}
   else lock();
 }
 document.getElementById("craftClose").onclick=()=>toggleCraft();
@@ -1998,7 +2008,7 @@ function checkWin(){
   if(won)return;
   if(DIM===0&&portalActive&&insideCells(portalCells)){enterEnd();return;}
   if(DIM===1&&dragonDead&&insideCells(exitCells)){
-    won=true;SFX.win();document.exitPointerLock();
+    won=true;releaseInputs();unlockPointer();try{SFX.win();}catch(e){}
     document.getElementById("winInfo").innerHTML=
       `你集齊了 5 顆 Lumen 水晶、穿越傳送門進入終界、擊敗守護巨龍並凱旋。<br>
        擊殺數 ${P.kills} · 存活 ${Math.floor(gameTime)} 秒`;
