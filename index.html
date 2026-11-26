@@ -187,7 +187,9 @@
   #mpMsg{font-size:13px;color:#ffd86b;min-height:18px;}
   #netBadge{position:fixed;top:64px;right:calc(14px + env(safe-area-inset-right));z-index:16;display:none;
     padding:5px 10px;border-radius:8px;background:rgba(0,0,0,.5);color:#bfe9ff;font-size:12px;
-    pointer-events:none;text-shadow:0 1px 2px #000;line-height:1.5;text-align:right;}
+    pointer-events:none;text-shadow:0 1px 2px #000;line-height:1.6;text-align:right;}
+  #netBadge .mate{white-space:nowrap;} #netBadge .arr{display:inline-block;font-size:14px;margin-right:4px;}
+  #tbMate{display:none;} body.mp #tbMate{display:inline-block;}
   body:not(.touch) #netBadge{top:14px;}
   body.touch #orientHint{display:block;}
 </style>
@@ -231,6 +233,7 @@
   <button class="tb sm" id="tbPot" title="藥水">🧪</button>
   <button class="tb sm" id="tbSave" title="存檔">💾</button>
   <button class="tb sm" id="tbLoad" title="讀檔">📂</button>
+  <button class="tb sm" id="tbMate" title="傳送到同伴">📍</button>
   <button class="tb sm" id="tbPause" title="暫停">⏸</button>
 </div>
 <div id="toast"></div>
@@ -1044,6 +1047,7 @@ document.addEventListener("keydown",e=>{
   if(!locked||dead||won)return;
   if(e.code.startsWith("Digit")){const n=+e.code.slice(5); if(n>=1&&n<=9)selectSlot(n-1);}
   if(e.code==="KeyH")usePotion("heal");
+  if(e.code==="KeyT"&&locked&&!dead&&!won)tpToMate();
   if(e.code==="KeyN")usePotion("nv");
   if(e.code==="KeyG")usePotion("apple");
 });
@@ -2222,6 +2226,7 @@ const VM={
   tap("tbPot",()=>{if(!locked)return;if(counts.heal>0)usePotion("heal");else if(counts.apple>0)usePotion("apple");else if(counts.nv>0)usePotion("nv");else toast("沒有藥水（合成台可製作）");});
   tap("tbSave",()=>{if(started&&!won)saveGame();});
   tap("tbLoad",()=>{if(started)loadGame();});
+  tap("tbMate",()=>{if(locked&&!dead&&!won)tpToMate();});
   tap("tbPause",()=>{if(!started||dead||won||menuOpen)return;locked=false;show("pauseOv",true);});
   // 快捷欄：點一下切換；左右拖曳則捲動（觸控區 z-index 已讓出）
   let hbX=0,hbY=0,hbMoved=false;
@@ -2361,7 +2366,7 @@ const NET={on:false,host:false,mute:false,peer:null,conns:new Map(),hostConn:nul
       if(this.host)m.day=+dayT.toFixed(4);
       this.send(m);}
     for(const pl of this.players.values())avatarUpdate(pl,dt);
-    updateNetBadge();
+    this.badgeT=(this.badgeT||0)-dt; if(this.badgeT<=0){this.badgeT=0.2;updateNetBadge();}
   },
   resync(){ if(!this.host)return; this.send({t:"state",s:hostState()}); }
 };
@@ -2396,7 +2401,7 @@ function makeNameTag(name,col){
   g.fillStyle="rgba(0,0,0,.55)"; g.fillRect(0,8,256,48);
   g.font="bold 32px 'Microsoft JhengHei',sans-serif"; g.textAlign="center"; g.textBaseline="middle";
   g.fillStyle="#"+col.toString(16).padStart(6,"0"); g.fillText(name,128,33);
-  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false,transparent:true}));
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false,transparent:true,fog:false}));
   sp.scale.set(1.6,0.4,1); sp.position.y=2.25; sp.renderOrder=10; return sp;
 }
 function makeAvatar(name,col){
@@ -2409,8 +2414,13 @@ function makeAvatar(name,col){
   head.position.set(0,1.42,0); head.add(box(0.46,0.46,0.46,skin,0,0.23,0));
   head.add(box(0.48,0.14,0.48,shirt,0,0.42,0));               // 帽子（玩家色）
   head.add(box(0.08,0.08,0.02,M(0x222222),-0.1,0.26,-0.235)); head.add(box(0.08,0.08,0.02,M(0x222222),0.1,0.26,-0.235));
-  g.add(box(0.5,0.68,0.28,shirt,0,1.06,0),legL,legR,armL,armR,head,makeNameTag(name,col));
-  g.userData={legL,legR,armL,armR,head}; g.visible=false; scene.add(g); return g;
+  const tag=makeNameTag(name,col);
+  // 遠距離光柱（玩家色，不受霧影響）：走散時抬頭就看得到同伴在哪
+  const beam=new THREE.Mesh(new THREE.BoxGeometry(0.3,140,0.3),
+    new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.55,fog:false,depthWrite:false}));
+  beam.position.y=72.6;
+  g.add(box(0.5,0.68,0.28,shirt,0,1.06,0),legL,legR,armL,armR,head,tag,beam);
+  g.userData={legL,legR,armL,armR,head,tag,beam}; g.visible=false; scene.add(g); return g;
 }
 function addPlayer(id,name,ci){
   if(id===NET.myId||NET.players.has(id))return;
@@ -2432,13 +2442,49 @@ function avatarUpdate(pl,dt){
   u.armL.rotation.x=-Math.sin(pl.walk)*amp;
   u.armR.rotation.x=pl.sw?-1.2+Math.sin(performance.now()/60)*0.6:Math.sin(pl.walk)*amp;
   u.head.rotation.x=-pl.pitch*0.8;
+  // 距離越遠：名牌放大保持可讀，光柱才顯示（近距離不擋視線）
+  const dist=Math.hypot(g.position.x-P.x,g.position.z-P.z); pl.dist=dist;
+  const sc=Math.min(14,Math.max(1,dist/8)); u.tag.scale.set(1.6*sc,0.4*sc,1); u.tag.position.y=2.25+(sc-1)*0.25;
+  const bw=Math.max(1,dist/12); u.beam.scale.set(bw,1,bw);      // 光柱寬度隨距離放大，遠處仍明顯
+  u.beam.visible=dist>12;
+}
+function mateDir(pl){
+  const yawT=Math.atan2(-(pl.tx-P.x),-(pl.tz-P.z));
+  return -(yawT-P.yaw)-Math.PI/2;   // 與指南針同一套算法：➤ 旋轉後指向同伴
+}
+function tpToMate(){
+  if(!NET.on)return;
+  const all=[...NET.players.values()].filter(p=>p.has&&!p.dead);
+  const same=all.filter(p=>p.d===DIM).sort((a,b)=>Math.hypot(a.tx-P.x,a.tz-P.z)-Math.hypot(b.tx-P.x,b.tz-P.z));
+  if(!same.length){
+    if(all.length)toast(`📍 ${all[0].name} 在${all[0].d?"終界":"主世界"}，要先走傳送門才能會合`);
+    else toast("📍 目前沒有可傳送的同伴");
+    return;
+  }
+  const pl=same[0];
+  P.x=pl.tx+1.2; P.z=pl.tz; warmup(P.x,P.z,1);
+  P.y=Math.max(pl.ty,surfaceY(P.x,P.z)+1.05);
+  if(!bodyFree(P.x,P.y,P.z)){P.x=pl.tx;P.z=pl.tz;P.y=pl.ty+0.05;}
+  P.vx=P.vy=P.vz=0; P.iframe=2; mining=null;
+  SFX.chime(); toast(`📍 已傳送到 ${pl.name} 身邊`);
 }
 function updateNetBadge(){
   const el=document.getElementById("netBadge");
+  document.body.classList.toggle("mp",NET.on);
   if(!NET.on){el.style.display="none";return;}
   el.style.display="block";
-  const names=[...NET.players.values()].map(p=>p.name+(p.d!==DIM?"（"+(p.d?"終界":"主世界")+"）":""));
-  el.innerHTML=`🌐 房號 <b>${NET.code}</b>${NET.host?"（房主）":""} · ${NET.players.size+1} 人<br>${names.length?"同伴："+names.join("、"):"等待同伴加入…"}`;
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const rows=[...NET.players.values()].map(p=>{
+    const nm=`<b style="color:#${p.col.toString(16).padStart(6,"0")}">${esc(p.name)}</b>`;
+    if(!p.has)return `<div class="mate">${nm} 連線中…</div>`;
+    if(p.d!==DIM)return `<div class="mate">${nm}（在${p.d?"終界":"主世界"}）</div>`;
+    if(p.dead)return `<div class="mate">💀 ${nm} 重生中</div>`;
+    const d=Math.round(Math.hypot(p.tx-P.x,p.tz-P.z)), dy=Math.round(p.ty-P.y);
+    const h=Math.abs(dy)>=4?(dy>0?` ↑${dy}`:` ↓${-dy}`):"";
+    return `<div class="mate"><span class="arr" style="transform:rotate(${mateDir(p)}rad)">➤</span>${nm} ${d}m${h}</div>`;
+  });
+  el.innerHTML=`🌐 房號 <b>${NET.code}</b>${NET.host?"（房主）":""} · ${NET.players.size+1} 人`+
+    (rows.length?rows.join("")+`<div style="color:#8aa0ad;font-size:11px">${TOUCH?"📍 傳送到同伴":"T 傳送到同伴"}</div>`:"<div>等待同伴加入…</div>");
 }
 
 /* ---- 套用遠端事件 ---- */
