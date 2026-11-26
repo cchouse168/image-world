@@ -1,5 +1,5 @@
 // ===== Voxel World PWA Service Worker =====
-const CACHE = "voxel-lumen-v8";
+const CACHE = "voxel-lumen-v9";
 const THREE_CDN = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
 const ASSETS = [
   "./", "./index.html", "./manifest.json",

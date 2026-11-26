@@ -227,6 +227,46 @@
   #hitmark::before{left:0;right:0;top:14px;height:2px;} #hitmark::after{top:0;bottom:0;left:14px;width:2px;}
   #hitmark.hs::before,#hitmark.hs::after{background:#ffd54a;}
   #hitmark.kill::before,#hitmark.kill::after{background:#ff4040;}
+  /* ===== 開場畫面 ===== */
+  #startOv{background:radial-gradient(ellipse at 50% 18%,rgba(140,90,255,.45),transparent 55%),radial-gradient(ellipse at 50% 110%,rgba(30,170,210,.35),transparent 60%),rgba(6,8,18,.82);}
+  .tTitle{margin-bottom:22px;}
+  .logo{font-size:52px;font-weight:900;letter-spacing:10px;line-height:1;
+    background:linear-gradient(90deg,#7be8ff,#c99aff,#ffd86b,#7be8ff);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:bossShine 6s linear infinite;filter:drop-shadow(0 4px 18px rgba(150,140,255,.6));}
+  .logoSub{margin-top:8px;font-size:15px;letter-spacing:8px;color:#cdbdff;opacity:.85;}
+  .nameRow{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);}
+  .nameRow span{font-size:20px;} .nameRow input{background:transparent;border:none;outline:none;color:#fff;font-size:18px;width:160px;text-align:center;}
+  .cards{display:flex;gap:18px;margin-top:22px;flex-wrap:wrap;justify-content:center;}
+  .card{width:220px;padding:22px 16px 18px;border-radius:20px;border:1px solid rgba(255,255,255,.18);cursor:pointer;color:#fff;
+    background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.03));box-shadow:0 10px 30px rgba(0,0,0,.35);
+    transition:transform .15s,box-shadow .15s;font-family:inherit;}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(120,100,255,.35);}
+  .card.go{background:linear-gradient(160deg,rgba(80,200,255,.35),rgba(140,90,255,.25));border-color:rgba(160,220,255,.5);}
+  .card .ic{font-size:44px;line-height:1.1;} .card .t{font-size:22px;font-weight:700;margin-top:8px;letter-spacing:2px;}
+  .card .d{font-size:13px;color:#d5dcff;margin-top:6px;opacity:.85;}
+  .codeRow{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+  .codeRow input{width:96px;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.35);color:#fff;font-size:20px;
+    text-align:center;letter-spacing:6px;}
+  .codeRow button{padding:8px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#9a5bd6,#c97bff);color:#fff;font-weight:700;cursor:pointer;}
+  .foot{margin-top:18px;display:flex;gap:8px;align-items:center;color:#7d8aa8;}
+  .linkBtn{background:none;border:none;color:#aebde0;font-size:14px;cursor:pointer;padding:4px 6px;} .linkBtn:hover{color:#fff;}
+  #helpBox{display:none;margin-top:10px;max-width:640px;} #helpBox .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  #helpBox span{font-size:12px;padding:4px 10px;border-radius:14px;background:rgba(255,255,255,.08);color:#cfd8ee;} #helpBox b{color:#ffd86b;}
+  #mpMsg{margin-top:10px;}
+  @media (max-height:620px){.logo{font-size:36px;letter-spacing:6px;} .tTitle{margin-bottom:10px;} .cards{margin-top:12px;gap:12px;}
+    .card{width:190px;padding:14px 12px;} .card .ic{font-size:32px;} .card .t{font-size:18px;}}
+  /* ===== 大廳 HUD ===== */
+  #hubBanner{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:12;display:none;text-align:center;pointer-events:none;text-shadow:0 2px 6px #000;}
+  body.hub #hubBanner{display:block;}
+  #hubBanner .hint{font-size:15px;color:#e8dcff;background:rgba(30,15,60,.45);padding:6px 16px;border-radius:20px;}
+  #hubBanner .dest{font-size:28px;font-weight:800;color:#fff6d8;} #hubBanner .sub{font-size:14px;color:#e8dcff;margin-top:2px;}
+  #hubBanner .wait{font-size:14px;color:#ffd86b;margin-top:6px;} #hubBanner .cd{font-size:64px;font-weight:900;color:#7dffb0;line-height:1.1;}
+  body.title #hotbar,body.title #hpWrap,body.title #status,body.title #armorTag,body.title #compass,body.title #compassLabel,body.title #touchUI,body.title #tTop,body.title #netBadge{display:none!important;}
+  body.hub #hotbar,body.hub #hpWrap,body.hub #status,body.hub #armorTag,body.hub #compass,body.hub #compassLabel,
+  body.hub #tbMine,body.hub #tbUse,body.hub #tbCraft,body.hub #tbPot,body.hub #tbSave,body.hub #tbLoad{display:none!important;}
+  #hubBtn{display:none;} body.canHub #hubBtn{display:inline-block;}
+  .volBox{margin-top:18px;display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:14px;color:#cfd8ee;}
+  .volBox input[type=range]{width:130px;vertical-align:middle;accent-color:#9a5bd6;}
   /* ===== 多人連線 ===== */
   input{-webkit-user-select:text;user-select:text;}
   #mpBox{margin-top:16px;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,.06);
@@ -248,7 +288,7 @@
   body.touch #orientHint{display:block;}
 </style>
 </head>
-<body>
+<body class="title">
 <div id="crosshair"></div>
 <div id="mineBar"><div id="mineFill"></div></div>
 
@@ -288,6 +328,7 @@
   <button class="tb sm" id="tbSave" title="存檔">💾</button>
   <button class="tb sm" id="tbLoad" title="讀檔">📂</button>
   <button class="tb sm" id="tbMate" title="傳送到同伴">📍</button>
+  <button class="tb sm" id="tbSnd" title="配樂開關">🎵</button>
   <button class="tb sm" id="tbPause" title="暫停">⏸</button>
 </div>
 <div id="toast"></div>
@@ -304,35 +345,28 @@
 </div></div>
 
 <div id="startOv" class="overlay">
-  <h1>VOXEL WORLD · Lumen 之章</h1>
-  <p>
-    無邊界的世界：五種生態系、河流海洋、地底洞穴與岩漿；散落著村莊、廢棄礦坑與廢墟傳送門（裡面有寶箱）。<br>
-    收集散落各地的 <b style="color:#7be8ff">5 顆 Lumen 水晶</b>（跟著光柱與羅盤走），<br>
-    開啟傳送門進入終界浮空島 —— 守護者「流明巨龍」與五根黑曜石柱在那裡等你。<br><br>
-    WASD 移動　Space 跳躍/游泳　Shift 疾跑<br>
-    左鍵 挖掘/攻擊（手持手槍＝開槍）　右鍵 放置方塊/射箭/開槍　滾輪或 1–9 切換快捷欄（共 15 格）<br>
-    鎬挖石礦、斧砍木、鏟挖土沙 —— 用對工具快很多；鐵/金/鑽礦必須手持鎬<br>
-    Tab 合成選單　H/N/G 使用藥水　夜晚會有暗影怪出沒，火把能驅趕它們<br>
-    <b style="color:#ffd86b">F5 存檔　·　F9 讀檔</b>（進度會保留，下次打開可繼續）
-  </p>
-  <button class="btn" id="startBtn">單人開始</button>
-  <div id="mpBox">
-    <div class="modeRow"><button class="modeBtn on" data-mode="coop">🤝 協作</button><button class="modeBtn" data-mode="tdm">⚔ 團隊死鬥</button><button class="modeBtn" data-mode="ctf">🚩 搶旗</button></div>
-    <div class="row"><label>👥 多人連線（同一個 Wi-Fi）　名字</label><input id="mpName" maxlength="10"></div>
-    <div class="row">
-      <button class="btn" id="mpHostBtn">建立房間</button>
-      <span style="color:#7d8f9a">或</span>
-      <input id="mpCode" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="房號">
-      <button class="btn alt" id="mpJoinBtn">加入房間</button>
-    </div>
-    <div class="row"><button class="btn alt" id="mpPractice">🤖 單機練習（只打電腦）</button></div>
-    <div id="mpMsg"></div>
+  <div class="tTitle"><div class="logo">VOXEL WORLD</div><div class="logoSub">✦ Lumen 之章 ✦</div></div>
+  <div class="nameRow"><span>🙂</span><input id="mpName" maxlength="10" placeholder="你的名字" autocomplete="off"></div>
+  <div class="cards">
+    <button class="card go" id="mpHostBtn"><div class="ic">🏠</div><div class="t">進入大廳</div><div class="d">協作 · 對戰 · 選地圖</div></button>
+    <div class="card join"><div class="ic">🔗</div><div class="t">加入朋友</div>
+      <div class="codeRow"><input id="mpCode" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="房號" autocomplete="off"><button id="mpJoinBtn">GO</button></div></div>
   </div>
-  <div id="orientHint">📱 手機版：左側搖桿移動、右側拖曳轉視角；建議橫向持機，並「加入主畫面」以全螢幕遊玩</div>
+  <div id="mpMsg"></div>
+  <div class="foot"><button class="linkBtn" id="startBtn">⚡ 直接單人冒險</button><span class="dot">·</span><button class="linkBtn" id="helpBtn">❔ 操作</button></div>
+  <div id="helpBox">
+    <div class="chips">
+      <span><b>WASD</b> 移動</span><span><b>Space</b> 跳</span><span><b>Shift</b> 衝刺</span><span><b>左鍵</b> 挖 / 攻擊 / 開槍</span>
+      <span><b>右鍵</b> 放置 / 開鏡</span><span><b>1–9 · 滾輪</b> 換道具</span><span><b>Tab</b> 合成 · 記分板</span><span><b>F5 / F9</b> 存讀檔</span>
+      <span><b>📱</b> 左搖桿移動 · 右側拖曳轉視角</span>
+    </div>
+  </div>
 </div>
 
 <div id="pauseOv" class="overlay"><h1>已暫停</h1><p>滑鼠已解鎖</p>
-  <button class="btn" id="resumeBtn">點擊繼續</button></div>
+  <div><button class="btn" id="resumeBtn">點擊繼續</button>　<button class="btn alt" id="hubBtn">🏠 回大廳</button></div>
+  <div class="volBox"><label>🎵 音樂 <input type="range" id="volMusic" min="0" max="100"></label><label>🔊 音效 <input type="range" id="volSfx" min="0" max="100"></label>
+    <button class="linkBtn" id="volMute"></button></div></div>
 
 <div id="deathOv" class="overlay"><h1>你死了</h1><p id="deathInfo"></p>
   <button class="btn" id="respawnBtn">重生</button></div>
@@ -353,9 +387,9 @@
   <div id="pvWait">等待房主開始對戰…（可以先選隊伍）</div>
 </div>
 <div id="pvpEnd" class="overlay"><h1 id="peTitle"></h1><p id="peInfo"></p>
-  <div><button class="btn" id="peAgain">再來一場</button>　<button class="btn alt" id="peMenu">回主選單</button></div>
+  <div><button class="btn" id="peAgain">⚔ 再來一場</button>　<button class="btn alt" id="peMenu">🏠 回大廳</button></div>
   <div id="peWait">等待房主決定是否再來一場…</div></div>
-<div id="pvpHud"></div><div id="killFeed"></div><div id="pvpBig"></div><div id="pvpDeath"></div><div id="pvpBoard"></div>
+<div id="hubBanner"></div><div id="pvpHud"></div><div id="killFeed"></div><div id="pvpBig"></div><div id="pvpDeath"></div><div id="pvpBoard"></div>
 <div id="winOv" class="overlay"><h1>🏆 你贏了！</h1><p id="winInfo"></p>
   <button class="btn" onclick="location.reload()">再玩一次</button></div>
 
@@ -591,46 +625,232 @@ function tileUV(tile){
 }
 
 /* ============ 音效（WebAudio 程式化） ============ */
+/* ================================================================
+   音訊引擎：主匯流排（壓縮 + 殘響）· 分層合成音效 · 程序生成配樂
+   ================================================================ */
 let AC=null;
-function audio(){ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); return AC; }
-function blip(f,dur,type,g,slide){
-  try{
-    const ac=audio(), o=ac.createOscillator(), gn=ac.createGain();
-    o.type=type||"square"; o.frequency.setValueAtTime(f,ac.currentTime);
-    if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(20,f+slide),ac.currentTime+dur);
-    gn.gain.setValueAtTime(g||0.12,ac.currentTime);
-    gn.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+dur);
-    o.connect(gn); gn.connect(ac.destination); o.start(); o.stop(ac.currentTime+dur);
-  }catch(e){}
+const AUD={master:null,sfx:null,music:null,rev:null,sfxRev:null,musRev:null,noise:null,
+  vol:{music:0.55,sfx:0.9},muted:false};
+try{const v=JSON.parse(localStorage.getItem("voxel_vol")||"null");if(v){AUD.vol.music=v.music??0.55;AUD.vol.sfx=v.sfx??0.9;AUD.muted=!!v.muted;}}catch(e){}
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    const ac=AC;
+    const comp=ac.createDynamicsCompressor(); comp.threshold.value=-16; comp.knee.value=12; comp.ratio.value=4; comp.attack.value=0.004; comp.release.value=0.22;
+    AUD.master=ac.createGain(); AUD.master.gain.value=0.9; AUD.master.connect(comp); comp.connect(ac.destination);
+    AUD.sfx=ac.createGain(); AUD.sfx.connect(AUD.master);
+    AUD.music=ac.createGain(); AUD.music.connect(AUD.master);
+    // 程式生成的立體聲殘響（2.4 秒指數衰減）
+    const len=(ac.sampleRate*2.4)|0, ir=ac.createBuffer(2,len,ac.sampleRate);
+    for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++){const t=i/len;d[i]=(Math.random()*2-1)*Math.pow(1-t,3.2)*(i<200?i/200:1);}}
+    AUD.rev=ac.createConvolver(); AUD.rev.buffer=ir;
+    const revOut=ac.createGain(); revOut.gain.value=0.8; AUD.rev.connect(revOut); revOut.connect(AUD.master);
+    AUD.sfxRev=ac.createGain(); AUD.sfxRev.gain.value=0.22; AUD.sfxRev.connect(AUD.rev);
+    AUD.musRev=ac.createGain(); AUD.musRev.gain.value=0.38; AUD.musRev.connect(AUD.rev);
+    const nb=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate),nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1; AUD.noise=nb;
+    applyVolume();
+  }
+  if(AC.state==="suspended")AC.resume();
+  return AC;
 }
+function applyVolume(){ if(!AC)return; const t=AC.currentTime;
+  AUD.sfx.gain.setTargetAtTime(AUD.vol.sfx,t,0.05); AUD.music.gain.setTargetAtTime(AUD.muted?0:AUD.vol.music*0.7,t,0.3); AUD.musRev.gain.setTargetAtTime(AUD.muted?0:0.38,t,0.3);
+  try{localStorage.setItem("voxel_vol",JSON.stringify({music:AUD.vol.music,sfx:AUD.vol.sfx,muted:AUD.muted}));}catch(e){} }
+
+/* ---------- 合成基本單元 ---------- */
+function _out(bus,rev,pan){ const ac=AC; let node=bus;
+  if(pan&&ac.createStereoPanner){const p=ac.createStereoPanner();p.pan.value=Math.max(-1,Math.min(1,pan));p.connect(bus);if(rev)p.connect(rev);return p;}
+  if(rev){const g=ac.createGain();g.connect(bus);g.connect(rev);return g;} return node; }
+// 音調：type/頻率滑動/濾波包絡/攻擊釋放
+function tone(f,dur,o){ try{ const ac=audio(); o=o||{}; const t=(o.t||ac.currentTime);
+  const osc=ac.createOscillator(), g=ac.createGain(); osc.type=o.type||"sine"; osc.frequency.setValueAtTime(f,t);
+  if(o.to)osc.frequency.exponentialRampToValueAtTime(Math.max(20,o.to),t+(o.slide||dur)); if(o.detune)osc.detune.value=o.detune;
+  let last=osc;
+  if(o.lp||o.bp||o.hp){const fl=ac.createBiquadFilter();fl.type=o.lp?"lowpass":o.bp?"bandpass":"highpass";fl.frequency.setValueAtTime(o.lp||o.bp||o.hp,t);fl.Q.value=o.q||0.8;
+    if(o.lpTo)fl.frequency.exponentialRampToValueAtTime(o.lpTo,t+dur);last.connect(fl);last=fl;}
+  if(o.vib){const l=ac.createOscillator(),lg=ac.createGain();l.frequency.value=o.vib;lg.gain.value=f*(o.vibD||0.012);l.connect(lg);lg.connect(osc.frequency);l.start(t);l.stop(t+dur+0.1);}
+  const a=o.a||0.004, gain=o.g||0.2;
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(gain,t+a);
+  if(o.sus)g.gain.setValueAtTime(gain,t+Math.max(a,dur-(o.r||0.1)));
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  last.connect(g); g.connect(_out(o.bus||AUD.sfx,o.rev===false?null:(o.revBus||(o.rev?AUD.sfxRev:null)),o.pan));
+  osc.start(t); osc.stop(t+dur+0.05); }catch(e){} }
+// 雜訊：濾波掃頻 + 衰減曲線
+function noise(dur,o){ try{ const ac=audio(); o=o||{}; const t=(o.t||ac.currentTime);
+  const src=ac.createBufferSource(); src.buffer=AUD.noise; src.loop=true; src.playbackRate.value=o.rate||1;
+  const fl=ac.createBiquadFilter(); fl.type=o.type||"lowpass"; fl.frequency.setValueAtTime(o.f||2000,t); fl.Q.value=o.q||0.7;
+  if(o.fTo)fl.frequency.exponentialRampToValueAtTime(o.fTo,t+dur);
+  const g=ac.createGain(), gain=o.g||0.2, a=o.a||0.002;
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(gain,t+a); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  src.connect(fl); fl.connect(g); g.connect(_out(o.bus||AUD.sfx,o.rev?(o.revBus||AUD.sfxRev):null,o.pan));
+  src.start(t,Math.random()*1.5); src.stop(t+dur+0.05); }catch(e){} }
+function blip(f,dur,type,g,slide){ tone(f,dur,{type:type||"square",g:(g||0.12)*0.8,to:slide?Math.max(20,f+slide):0}); }
+const jit=(v,k)=>v*(1+(Math.random()-0.5)*(k||0.08));
+
+/* ---------- 音效 ---------- */
+const STEP_MAT=id=>{
+  if([B.STONE,B.COBBLE,B.SMOOTH,B.PATH,B.BRICK,B.SLATE,B.SNOWSLATE,B.MOSSY,B.SANDST,B.STEEL,B.GOLDT,B.ENDSTONE,B.BEDROCK].includes(id))return"stone";
+  if([B.PLANK,B.WOOD,B.DARKWOOD,B.DLOG,B.CHEST,B.CHEST_OPEN].includes(id))return"wood";
+  if([B.SNOW,B.ICE].includes(id))return id===B.ICE?"ice":"snow";
+  if(id===B.SAND)return"sand"; if(id===B.WATER)return"water"; return"grass";};
 const SFX={
-  brk:()=>blip(95,0.12,"square",0.10),
-  place:()=>blip(240,0.08,"square",0.08),
-  hit:()=>blip(70,0.15,"sawtooth",0.14,-30),
-  hurt:()=>blip(140,0.22,"sawtooth",0.15,-90),
-  craft:()=>{blip(520,0.1,"sine",0.1);setTimeout(()=>blip(780,0.12,"sine",0.1),80);},
-  chime:()=>{blip(880,0.25,"sine",0.12);setTimeout(()=>blip(1320,0.35,"sine",0.1),120);},
-  bow:()=>blip(420,0.1,"triangle",0.1,200),
-  gun:()=>{try{const ac=audio(),n=(ac.sampleRate*0.16)|0,buf=ac.createBuffer(1,n,ac.sampleRate),d=buf.getChannelData(0);
-      for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
-      const src=ac.createBufferSource(),g=ac.createGain(),f=ac.createBiquadFilter();
-      f.type="lowpass";f.frequency.value=2600;g.gain.value=0.42;
-      src.buffer=buf;src.connect(f);f.connect(g);g.connect(ac.destination);src.start();}catch(e){}
-    blip(140,0.16,"sawtooth",0.16,-100);},
-  click:()=>blip(1400,0.03,"square",0.05),
-  snipe:()=>{try{const ac=audio(),n=(ac.sampleRate*0.45)|0,buf=ac.createBuffer(1,n,ac.sampleRate),d=buf.getChannelData(0);
-      for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.2);
-      const src=ac.createBufferSource(),g=ac.createGain(),f=ac.createBiquadFilter();
-      f.type="lowpass";f.frequency.value=1500;g.gain.value=0.6;
-      src.buffer=buf;src.connect(f);f.connect(g);g.connect(ac.destination);src.start();}catch(e){}
-    blip(80,0.35,"sawtooth",0.2,-50); setTimeout(()=>{blip(900,0.04,"square",0.06);setTimeout(()=>blip(600,0.05,"square",0.06),140);},520);},
-  hitmark:hs=>{blip(hs?1500:1100,0.05,"square",0.07); if(hs)setTimeout(()=>blip(1900,0.06,"sine",0.08),50);},
-  scope:()=>blip(700,0.04,"triangle",0.05,300),
-  far:(k)=>blip(120,0.12,"sawtooth",0.1*Math.max(0.15,k),-60),
-  chop:()=>{blip(90,0.16,"square",0.16,-50);setTimeout(()=>blip(60,0.12,"sawtooth",0.1,-20),40);},
-  drink:()=>blip(300,0.2,"sine",0.1,160),
-  roar:()=>{blip(55,0.8,"sawtooth",0.22,40);setTimeout(()=>blip(48,0.9,"sawtooth",0.2,30),250);},
-  win:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>blip(f,0.35,"sine",0.14),i*160));}
+  brk:(id)=>{noise(0.16,{type:"bandpass",f:jit(900),fTo:260,q:1.1,g:0.28});tone(jit(130),0.12,{type:"triangle",to:55,g:0.22});
+    noise(0.06,{type:"highpass",f:3500,g:0.08,t:AC&&AC.currentTime+0.02});},
+  place:()=>{tone(jit(170),0.09,{type:"triangle",to:95,g:0.22,lp:900});noise(0.07,{type:"lowpass",f:700,g:0.14});},
+  hit:()=>{noise(0.12,{type:"bandpass",f:2200,fTo:500,q:1.4,g:0.18});tone(95,0.14,{type:"sine",to:45,g:0.32});noise(0.05,{type:"lowpass",f:400,g:0.2});},
+  hurt:()=>{tone(jit(240),0.24,{type:"sawtooth",to:150,g:0.16,lp:1200,lpTo:500,vib:28,vibD:0.03});noise(0.12,{type:"lowpass",f:900,g:0.12});
+    tone(70,0.18,{type:"sine",to:40,g:0.25});},
+  craft:()=>{const t=audio().currentTime;[523,659,784,1046].forEach((f,i)=>tone(f,0.5,{type:"triangle",g:0.1,t:t+i*0.06,lp:3000,rev:true}));},
+  chime:()=>{const t=audio().currentTime;for(const[f,d]of[[880,0],[1320,0.11]]){tone(f,1.2,{g:0.11,t:t+d,rev:true});tone(f*2.76,0.6,{g:0.035,t:t+d,rev:true});tone(f*5.4,0.3,{g:0.015,t:t+d,rev:true});}},
+  bow:()=>{tone(jit(260),0.22,{type:"sawtooth",to:200,g:0.12,lp:1800,lpTo:400});noise(0.08,{type:"highpass",f:2500,g:0.06});},
+  gun:()=>{const t=audio().currentTime;
+    noise(0.025,{type:"highpass",f:3200,g:0.38,t});                                     // 擊發瞬音
+    noise(0.2,{type:"lowpass",f:jit(2200),fTo:380,g:0.5,t,rev:true});                  // 爆裂
+    tone(jit(150),0.16,{type:"sine",to:42,g:0.55,t});                                  // 低頻衝擊
+    tone(jit(900),0.03,{type:"square",to:300,g:0.06,t:t+0.01});},
+  click:()=>{noise(0.02,{type:"bandpass",f:4200,q:3,g:0.14});tone(2400,0.02,{type:"square",g:0.03});},
+  snipe:()=>{const t=audio().currentTime;
+    noise(0.03,{type:"highpass",f:2600,g:0.45,t});
+    noise(0.7,{type:"lowpass",f:2800,fTo:220,g:0.7,t,rev:true});
+    tone(95,0.5,{type:"sine",to:28,g:0.7,t}); tone(55,0.7,{type:"triangle",to:30,g:0.25,t});
+    for(const[d,f]of[[0.55,3200],[0.72,2400],[0.95,2800],[1.05,1800]])noise(0.035,{type:"bandpass",f,q:4,g:0.16,t:t+d});   // 拉栓
+    tone(380,0.06,{type:"square",g:0.03,t:t+0.72,bp:1200});},
+  hitmark:hs=>{const t=audio().currentTime;tone(hs?2100:1700,0.06,{type:"sine",g:0.12,t});noise(0.02,{type:"highpass",f:5000,g:0.06,t});
+    if(hs){tone(2600,0.35,{g:0.09,t:t+0.04,rev:true});tone(2600*2.76,0.15,{g:0.02,t:t+0.04});}},
+  kill:()=>{const t=audio().currentTime;tone(120,0.25,{type:"sine",to:50,g:0.4,t});tone(1568,0.5,{g:0.08,t:t+0.05,rev:true});tone(2093,0.5,{g:0.06,t:t+0.12,rev:true});},
+  scope:()=>{noise(0.14,{type:"bandpass",f:700,fTo:2400,q:2,g:0.07});tone(1200,0.03,{type:"square",g:0.03,bp:2000});},
+  far:(k,pan,w)=>{const kk=Math.max(0.08,Math.min(1,k)); const t=audio().currentTime;
+    noise(w==="sniper"?0.6:0.22,{type:"lowpass",f:w==="sniper"?1400:900+kk*1200,fTo:200,g:(w==="sniper"?0.45:0.28)*kk,t,pan,rev:true});
+    tone(w==="sniper"?80:120,0.18,{type:"sine",to:40,g:0.2*kk,t,pan});},
+  chop:()=>{noise(0.1,{type:"bandpass",f:jit(650),q:2,g:0.28});tone(jit(180),0.1,{type:"triangle",to:100,g:0.25});},
+  drink:()=>{const t=audio().currentTime;for(let i=0;i<3;i++)tone(jit(320+i*40),0.09,{g:0.1,to:520+i*60,t:t+i*0.1,lp:1200});},
+  roar:()=>{tone(68,1.5,{type:"sawtooth",to:48,g:0.32,lp:420,lpTo:180,vib:6,vibD:0.06,a:0.1,rev:true});tone(52,1.6,{type:"sawtooth",to:40,g:0.22,lp:300,a:0.2,rev:true});
+    noise(1.4,{type:"lowpass",f:700,fTo:200,g:0.25,a:0.15,rev:true});},
+  win:()=>{const t=audio().currentTime;[523,659,784,1046].forEach((f,i)=>{tone(f,0.5,{type:"sawtooth",g:0.07,t:t+i*0.14,lp:2200,rev:true});tone(f,0.5,{type:"triangle",g:0.08,t:t+i*0.14,rev:true});});
+    for(const f of[523,659,784,1046])tone(f,1.8,{type:"sawtooth",g:0.05,t:t+0.62,lp:1800,a:0.05,sus:1,r:0.8,rev:true});},
+  lose:()=>{const t=audio().currentTime;[392,349,311,262].forEach((f,i)=>tone(f,0.7,{type:"triangle",g:0.1,t:t+i*0.22,lp:1400,rev:true}));},
+  step:(id)=>{const m=STEP_MAT(id),g=0.09;
+    if(m==="stone"){noise(0.06,{type:"bandpass",f:jit(1500,0.2),q:1.2,g});tone(jit(160),0.04,{type:"triangle",g:0.05});}
+    else if(m==="wood"){noise(0.06,{type:"bandpass",f:jit(700,0.2),q:1.5,g});tone(jit(220),0.06,{type:"triangle",to:150,g:0.08});}
+    else if(m==="snow"){noise(0.11,{type:"highpass",f:jit(2400,0.2),g:g*0.9});noise(0.08,{type:"lowpass",f:500,g:g*0.6});}
+    else if(m==="ice"){noise(0.05,{type:"highpass",f:4000,g:g*0.7});tone(jit(1800,0.2),0.05,{g:0.025});}
+    else if(m==="sand"){noise(0.09,{type:"bandpass",f:jit(2800,0.2),q:0.6,g:g*0.8});}
+    else if(m==="water"){noise(0.14,{type:"bandpass",f:jit(900,0.3),q:0.8,g:g*1.2});}
+    else noise(0.08,{type:"lowpass",f:jit(650,0.25),g:g*1.1});},
+  land:()=>{tone(90,0.12,{type:"sine",to:45,g:0.3});noise(0.1,{type:"lowpass",f:500,g:0.2});},
+  jump:()=>noise(0.06,{type:"lowpass",f:900,g:0.06}),
+  pickup:()=>{const t=audio().currentTime;[784,1175,1568].forEach((f,i)=>tone(f,0.3,{g:0.08,t:t+i*0.06,rev:true}));},
+  whoosh:()=>{noise(0.6,{type:"bandpass",f:300,fTo:2600,q:1.4,g:0.18,a:0.15,rev:true});tone(220,0.6,{type:"sine",to:880,g:0.06,a:0.2,rev:true});},
+  beep:(hi)=>tone(hi?1320:880,hi?0.35:0.14,{type:"square",g:0.06,lp:3000,rev:true}),
+  ui:()=>tone(1046,0.06,{type:"triangle",g:0.07})
+};
+
+/* ---------- 樂器（配樂用，接到音樂匯流排） ---------- */
+const MB=()=>AUD.music;
+const nf=n=>440*Math.pow(2,(n-69)/12);                 // MIDI → Hz
+const INST={
+  kick:(t,g)=>{tone(150,0.32,{to:42,slide:0.12,g:g||0.9,t,bus:MB()});noise(0.02,{type:"highpass",f:2000,g:0.1,t,bus:MB()});},
+  snare:(t,g)=>{noise(0.18,{type:"bandpass",f:1800,q:0.7,g:(g||0.4),t,bus:MB(),rev:true,revBus:AUD.musRev});tone(200,0.1,{type:"triangle",to:140,g:0.25*(g||0.4)/0.4,t,bus:MB()});},
+  hat:(t,g,open)=>noise(open?0.22:0.05,{type:"highpass",f:7000,g:g||0.12,t,bus:MB()}),
+  shaker:(t,g)=>noise(0.07,{type:"highpass",f:5000,g:g||0.06,a:0.02,t,bus:MB()}),
+  tom:(t,f,g)=>{tone(f,0.3,{to:f*0.6,g:g||0.5,t,bus:MB()});},
+  taiko:(t,g)=>{tone(95,0.55,{to:48,slide:0.3,g:g||0.8,t,bus:MB(),rev:true,revBus:AUD.musRev});noise(0.08,{type:"lowpass",f:600,g:0.25*(g||0.8),t,bus:MB()});},
+  bass:(t,n,d,g)=>{tone(nf(n),d,{type:"sawtooth",g:g||0.22,lp:420,lpTo:220,a:0.01,sus:1,r:0.08,t,bus:MB()});tone(nf(n-12),d,{g:(g||0.22)*0.8,a:0.01,sus:1,r:0.08,t,bus:MB()});},
+  pad:(t,ns,d,g)=>{for(const n of ns)for(const dt of[-7,7])tone(nf(n),d,{type:"sawtooth",detune:dt,g:(g||0.05),lp:1100,a:d*0.3,sus:1,r:d*0.35,t,bus:MB(),rev:true,revBus:AUD.musRev});},
+  bell:(t,n,d,g)=>{const f=nf(n);tone(f,d,{g:g||0.08,t,bus:MB(),rev:true,revBus:AUD.musRev});tone(f*2.76,d*0.5,{g:(g||0.08)*0.3,t,bus:MB()});tone(f*5.4,d*0.25,{g:(g||0.08)*0.12,t,bus:MB()});},
+  lead:(t,n,d,g,type)=>tone(nf(n),d,{type:type||"square",g:g||0.06,lp:2400,lpTo:900,a:0.01,sus:1,r:0.12,vib:5.5,vibD:0.006,t,bus:MB(),rev:true,revBus:AUD.musRev}),
+  flute:(t,n,d,g)=>{tone(nf(n),d,{type:"sine",g:g||0.09,a:0.08,sus:1,r:0.25,vib:5,vibD:0.01,t,bus:MB(),rev:true,revBus:AUD.musRev});
+    noise(d,{type:"bandpass",f:nf(n)*2,q:6,g:(g||0.09)*0.25,a:0.08,t,bus:MB()});},
+  pluck:(t,n,d,g,bright)=>{ try{const ac=audio(),buf=ksBuf(n,d,bright),src=ac.createBufferSource(),gg=ac.createGain(),lp=ac.createBiquadFilter();src.buffer=buf;gg.gain.value=g||0.3;
+    lp.type="lowpass";lp.frequency.value=Math.min(bright?3200:2000,nf(n)*(bright?6:4));lp.Q.value=0.5;     // 撥弦溫暖化，去掉刺耳的高頻
+    src.connect(lp);lp.connect(gg);gg.connect(AUD.music);const r=ac.createGain();r.gain.value=0.6;gg.connect(r);r.connect(AUD.musRev);src.start(t);}catch(e){} }
+};
+// Karplus-Strong 撥弦（快取）
+const _ks={};
+function ksBuf(n,d,bright){const key=n+"_"+d+"_"+(bright?1:0);if(_ks[key])return _ks[key];
+  const ac=audio(),sr=ac.sampleRate,N=Math.max(2,Math.round(sr/nf(n))),L=(sr*d)|0,b=ac.createBuffer(1,L,sr),y=b.getChannelData(0);
+  for(let i=0;i<N;i++)y[i]=(Math.random()*2-1)*(bright?0.9:0.6);
+  const damp=bright?0.996:0.992;
+  for(let i=N;i<L;i++){const a0=y[i-N], a1=y[i-N+1<i?i-N+1:i-N];   // 兩個相鄰取樣平均＝低通，形成撥弦衰減
+    y[i]=(bright?0.6*a0+0.4*a1:0.5*a0+0.5*a1)*damp;}
+  return _ks[key]=b;}
+
+/* ---------- 程序配樂 ---------- */
+const STYLES={
+  // 大廳：夢幻鋪底 + 鐘琴琶音（Cmaj7 - Am7 - Fmaj7 - G6）
+  hub:{bpm:72,bars:4,step(s,bar,t,sd){const ch=[[48,52,55,59],[45,48,52,55],[41,45,48,52],[43,47,50,52]][bar%4];
+    if(s===0){INST.pad(t,ch.map(n=>n+12),sd*16,0.035);INST.bass(t,ch[0]-12,sd*15,0.12);}
+    if(s%2===0){const arp=[0,1,2,3,2,1,3,2];INST.bell(t,ch[arp[(s/2)%8]]+24,1.6,0.05);}
+    if(s===14&&bar%2)INST.bell(t,ch[3]+36,2,0.03);}},
+  // 協作白天：溫暖撥弦（G - Em - C - D）
+  coop:{bpm:92,bars:4,step(s,bar,t,sd){const ch=[[55,59,62,67],[52,55,59,64],[48,52,55,60],[50,54,57,62]][bar%4];
+    if(s===0){INST.bass(t,ch[0]-12,sd*7,0.14);INST.pad(t,ch,sd*16,0.022);} if(s===8)INST.bass(t,ch[0]-12+7,sd*7,0.12);
+    const pat=[0,2,1,3,2,1,3,2,0,2,1,3,2,3,1,2];if(s%2===0||s%4===3)INST.pluck(t,ch[pat[s]]+12,1.4,0.22,false);
+    if(s%4===2)INST.shaker(t,0.035);
+    if(bar%4===3&&s===12)INST.bell(t,ch[3]+24,1.5,0.04);}},
+  // 協作夜晚：小調、稀疏鐘聲（Am - F - Dm - E）
+  night:{bpm:66,bars:4,step(s,bar,t,sd){const ch=[[45,48,52,57],[41,45,48,53],[38,41,45,50],[40,44,47,52]][bar%4];
+    if(s===0){INST.pad(t,ch,sd*16,0.04);INST.bass(t,ch[0]-12,sd*15,0.12);}
+    if(s===6||s===12)INST.bell(t,ch[(bar+s)%4]+24,2.4,0.035);
+    if(s===10&&bar%2)INST.pluck(t,ch[2]+12,2,0.12,false);}},
+  // 終界：低沉太鼓 + 不安的長音
+  end:{bpm:84,bars:2,step(s,bar,t,sd){const root=bar%2?39:38;
+    if(s===0)INST.pad(t,[root,root+3,root+7,root+13],sd*16,0.05);
+    if(s%8===0)INST.taiko(t,0.9); if(s===6||s===14)INST.taiko(t,0.45);
+    if(s===0||s===10)INST.bass(t,root-12,sd*6,0.2);
+    if(s===4&&bar%2)INST.lead(t,root+24+3,sd*6,0.03,"sawtooth");}},
+  // 流明競技場：熱血鼓組 + 電子貝斯（Dm - Bb - F - C）
+  pvp_arena:{bpm:128,bars:4,step(s,bar,t,sd,hot){const ch=[[50,53,57],[46,50,53],[41,45,48],[48,52,55]][bar%4];
+    if(s%4===0)INST.kick(t,0.85); if(s===4||s===12)INST.snare(t,0.42); if(s%2===0)INST.hat(t,0.07,s%8===6); if(hot&&s%2===1)INST.hat(t,0.05);
+    if(s%2===0)INST.bass(t,ch[0]-12+(s%8===6?12:0),sd*1.8,0.16);
+    if(s===0)INST.pad(t,ch.map(n=>n+12),sd*16,0.022);
+    const arp=[0,1,2,1,0,2,1,2];if(s%2===1)INST.lead(t,ch[arp[(s>>1)%8]]+24,sd*1.5,0.028,"square");}},
+  // 古鎮：五聲音階古箏 + 太鼓 + 尺八（D 小調五聲：D F G A C）
+  pvp_town:{bpm:100,bars:4,step(s,bar,t,sd,hot){const sc=[62,65,67,69,72,74,77,79,81];
+    if(s===0||s===10)INST.taiko(t,0.75); if(s===6||s===14)INST.taiko(t,0.35); if(hot&&s%4===2)INST.tom(t,180,0.25);
+    if(s===0)INST.bass(t,[38,41,36,43][bar%4],sd*15,0.14);
+    const mel=[[0,2,4,3,2,0,1,2],[3,4,5,4,3,2,4,3],[2,1,0,1,2,4,3,2],[5,4,3,2,1,2,0,-1]][bar%4];
+    if(s%2===0&&mel[s/2]>=0)INST.pluck(t,sc[mel[s/2]],1.2,0.24,true);
+    if(bar%2===1&&s===0)INST.flute(t,sc[[4,5,3,2][bar%4]]+12,sd*7,0.07);
+    if(s===0)INST.pad(t,[50,57,62],sd*16,0.018);}},
+  // 雪峰峽谷：冰晶鐘聲 + 史詩鋪底 + 風（Am - F - C - G）
+  pvp_canyon:{bpm:110,bars:4,step(s,bar,t,sd,hot){const ch=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]][bar%4];
+    if(s===0){INST.pad(t,ch,sd*16,0.035);INST.bass(t,ch[0]-24,sd*15,0.16);noise(sd*16,{type:"bandpass",f:500,fTo:900,q:0.6,g:0.025,a:sd*4,t,bus:MB()});}
+    if(s===0||s===8)INST.kick(t,0.55); if(s===12)INST.tom(t,110,0.4); if(s===4||s===12)INST.snare(t,0.22); if(hot&&s%2===0)INST.hat(t,0.05);
+    if(s%3===0)INST.bell(t,ch[(s/3)%3]+24,1.4,0.045);}},
+  // 結算：柔和鋪底
+  results:{bpm:70,bars:2,step(s,bar,t,sd){if(s===0)INST.pad(t,bar%2?[45,52,57,60]:[48,55,60,64],sd*16,0.035); if(s%4===0)INST.bell(t,[72,76,79,84][s/4],1.8,0.04);}}
+};
+const MUSIC={cur:null,next:0,step:0,bar:0,timer:null,gain:null,
+  play(name){
+    if(name===this.cur)return; audio(); const ac=AC;
+    if(this.gain){const g=this.gain;g.gain.setTargetAtTime(0,ac.currentTime,0.5);setTimeout(()=>{try{g.disconnect();}catch(e){}},2500);}
+    this.cur=name; if(!name||!STYLES[name]){this.gain=null;return;}
+    // 每首歌一個獨立的淡入淡出節點
+    const g=ac.createGain(); g.gain.value=0; g.gain.setTargetAtTime(1,ac.currentTime+0.1,0.8); g.connect(AUD.music); this.gain=g;
+    this.step=0;this.bar=0;this.next=ac.currentTime+0.15;
+    if(!this.timer)this.timer=setInterval(()=>this.tick(),30);
+  },
+  tick(){
+    if(!AC||!this.cur||!STYLES[this.cur])return;
+    const st=STYLES[this.cur], sd=60/st.bpm/4, ac=AC;
+    const save=AUD.music; AUD.music=this.gain||save;           // 讓樂器輸出到目前這首的淡入淡出節點
+    try{ while(this.next<ac.currentTime+0.12){
+        st.step(this.step,this.bar,this.next,sd,this.hot);
+        this.next+=sd; if(++this.step>=16){this.step=0;this.bar++;}
+      } }finally{ AUD.music=save; }
+  },
+  // 依目前場景自動選曲
+  auto(){
+    if(!started||!AC)return;
+    let want="coop";
+    if(HUB.on)want="hub";
+    else if(PVP.on)want=PVP.phase==="play"?"pvp_"+(PVP.cfg.map||"arena"):PVP.phase==="end"?"results":"hub";
+    else if(DIM===1)want="end";
+    else if(isNight())want="night";
+    this.hot=PVP.on&&PVP.phase==="play"&&(PVP.timeLeft<60||Math.abs(PVP.scores[0]-PVP.scores[1])<=1&&Math.max(...PVP.scores)>=PVP.target-2);
+    this.play(want);
+  }
 };
 
 /* ============ 雜訊 ============ */
@@ -1227,6 +1447,7 @@ document.addEventListener("keydown",e=>{
     else if(n>=1&&n<=9)selectSlot(n-1);}
   if(e.code==="KeyH")usePotion("heal");
   if(e.code==="KeyT"&&locked&&!dead&&!won&&!PVP.on)tpToMate();
+  if(e.code==="KeyM"&&started)toggleMusic();
   if(e.code==="KeyN")usePotion("nv");
   if(e.code==="KeyG")usePotion("apple");
 });
@@ -1342,14 +1563,19 @@ function updatePlayer(dt){
     P.vy=Math.max(P.vy,-3.5);
   }else{
     P.vy-=26*dt;
-    if(keys.Space&&P.onGround){P.vy=8.6;P.onGround=false;}
+    if(keys.Space&&P.onGround){P.vy=8.6;P.onGround=false;SFX.jump();}
   }
+  const vyBefore=P.vy;
   P.onGround=false; P.blocked=false;
   const canStep=wasGround||swim;
   collideAxis("x",P.vx*dt,canStep);
   collideAxis("z",P.vz*dt,canStep);
   collideAxis("y",P.vy*dt,false);
   if(P.y<-12){damage(100,"墜入虛空");}
+  // 腳步聲（依腳下材質）/ 落地聲
+  if(P.onGround&&!wasGround&&vyBefore<-9)SFX.land();
+  const hs=Math.hypot(P.vx,P.vz);
+  if((P.onGround||swim)&&hs>1){P.stepD=(P.stepD||0)+hs*dt;if(P.stepD>(hs>7?2.3:1.85)){P.stepD=0;SFX.step(swim?B.WATER:getB(Math.floor(P.x),Math.floor(P.y-0.2),Math.floor(P.z)));}}
   camera.position.set(P.x,P.y+EYE,P.z);
   camera.quaternion.setFromEuler(new THREE.Euler(P.pitch,P.yaw,0,"YXZ"));
 }
@@ -1417,7 +1643,7 @@ function updateMining(dt){
   fill.style.width=Math.min(100,mining.prog/mining.need*100)+"%";
   if(mining.prog>=mining.need){
     const[x,y,z]=mining.pos, id=mining.id;
-    setBlock(x,y,z,B.AIR); SFX.brk(); spawnParticles(x+0.5,y+0.5,z+0.5,COLORS[id]||[1,1,1]);
+    setBlock(x,y,z,B.AIR); SFX.brk(id); spawnParticles(x+0.5,y+0.5,z+0.5,COLORS[id]||[1,1,1]);
     if(id===B.TORCH){
       const i=torches.findIndex(t=>t.x===x&&t.y===y&&t.z===z);
       if(i>=0){scene.remove(torches[i].mesh);torches.splice(i,1);}
@@ -1442,6 +1668,7 @@ function openChest(x,y,z){
   setBlock(x,y,z,B.CHEST_OPEN); SFX.craft(); toast("📦 寶箱："+got.join("　"));
 }
 function rightClick(){
+  if(HUB.on)return;
   { const rb=rayBlocks(5.5); if(rb&&rb.id===B.CHEST){openChest(...rb.hit);VM.swing(0.6);return;} }
   const item=HOTBAR[selSlot];
   if(item.kind==="bow"){shootArrow();return;}
@@ -1468,6 +1695,7 @@ function swordDmg(){
   return weak;
 }
 function tryAttack(){
+  if(HUB.on)return;
   const held=HOTBAR[selSlot];
   if(held.kind==="gun"){fireWeapon("pistol");return;}
   if(held.kind==="sniper"){fireWeapon("sniper");return;}
@@ -2597,6 +2825,7 @@ const VM={
   tap("tbSave",()=>{if(PVP.on)return toast("對戰中不能存檔"); if(started&&!won)saveGame();});
   tap("tbLoad",()=>{if(PVP.on)return toast("對戰中不能讀檔"); if(started)loadGame();});
   tap("tbMate",()=>{if(locked&&!dead&&!won)tpToMate();});
+  tap("tbSnd",()=>toggleMusic());
   tap("tbPause",()=>{if(!started||dead||won||menuOpen)return;locked=false;show("pauseOv",true);});
   // 快捷欄：點一下切換；左右拖曳則捲動（觸控區 z-index 已讓出）
   let hbX=0,hbY=0,hbMoved=false;
@@ -2732,7 +2961,7 @@ const NET={on:false,host:false,mute:false,peer:null,conns:new Map(),hostConn:nul
     else if(this.hostConn&&now-(this.hostConn._seen||now)>8000)clientLost();
     if(this.sendT<=0){this.sendT=0.1;
       const m={t:"p",x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),yaw:+P.yaw.toFixed(3),
-        pitch:+P.pitch.toFixed(3),d:DIM,sw:mouseDown?1:0,dead:dead?1:0,hp:Math.round(P.hp),sn:P.sniper?1:0,
+        pitch:+P.pitch.toFixed(3),d:DIM,sw:mouseDown?1:0,dead:dead?1:0,hp:Math.round(P.hp),sn:P.sniper?1:0,mp:DIM===2&&CUR_MAP?CUR_MAP.id:"",
         wk:({gun:"g",sniper:"s",sword:"w"})[HOTBAR[selSlot].kind]||"",sc:SCOPE.on?1:0};
       if(this.host)m.day=+dayT.toFixed(4);
       this.send(m);}
@@ -2815,7 +3044,7 @@ function addPlayer(id,name,ci){
 }
 function removePlayer(id){ const pl=NET.players.get(id); if(!pl)return; scene.remove(pl.g); NET.players.delete(id); }
 function avatarUpdate(pl,dt){
-  const g=pl.g; g.visible=pl.has&&pl.d===DIM&&!pl.dead;
+  const g=pl.g; g.visible=pl.has&&pl.d===DIM&&!pl.dead&&(DIM!==2||!pl.mp||!CUR_MAP||pl.mp===CUR_MAP.id);
   if(!g.visible)return;
   const k=Math.min(1,dt*12), ox=g.position.x, oz=g.position.z;
   if(g.position.y<-900||Math.hypot(pl.tx-ox,pl.tz-oz)>12){g.position.set(pl.tx,pl.ty,pl.tz);}
@@ -2924,6 +3153,7 @@ function nameOf(id){ const p=NET.players.get(id); return p?p.name:"同伴"; }
 function onNetMsg(m,conn){
   if(!m||!m.t)return;
   if(m.t[0]==="P"){pvpMsg(m,conn);return;}
+  if(m.t[0]==="H"){hubMsg(m,conn);return;}
   if(NET.host&&conn){        // 房主：轉發給其他人
     m.from=conn.peer;
     if(m.t==="b"||m.t==="p"||m.t==="cr"||m.t==="dragon")
@@ -2932,7 +3162,7 @@ function onNetMsg(m,conn){
   const from=m.from;
   switch(m.t){
     case "p":{ const pl=NET.players.get(from); if(!pl)break;
-      pl.tx=m.x;pl.ty=m.y;pl.tz=m.z;pl.yaw=m.yaw;pl.pitch=m.pitch;pl.d=m.d;pl.sw=m.sw;pl.dead=m.dead;pl.has=true;pl.hp=m.hp;pl.sn=m.sn;pl.wk=m.wk||"";pl.sc=m.sc;
+      pl.tx=m.x;pl.ty=m.y;pl.tz=m.z;pl.yaw=m.yaw;pl.pitch=m.pitch;pl.d=m.d;pl.sw=m.sw;pl.dead=m.dead;pl.has=true;pl.hp=m.hp;pl.sn=m.sn;pl.wk=m.wk||"";pl.sc=m.sc;pl.mp=m.mp||"";
       if(!NET.host&&m.day!=null){let df=m.day-dayT; if(Math.abs(df)>0.01)dayT=m.day;}
       break;}
     case "b": NET.mute=true; applyRemoteBlock(m.x,m.y,m.z,m.id,m.d); NET.mute=false; break;
@@ -2964,17 +3194,15 @@ function clientLost(){
 addEventListener("pagehide",()=>{ try{if(NET.peer)NET.peer.destroy();}catch(e){} });
 /* ---- 房主 ---- */
 async function mpHost(){
-  setMpButtons(true); mpMsg("連線中…");
-  try{await loadPeerJS();}catch(e){mpMsg("❌ 無法載入連線元件（需要網路）");setMpButtons(false);return;}
+  NET.myName=mpName(); HUB.offline=false; enterHub();      // 先進大廳，房間在背景建立
+  try{await loadPeerJS();}catch(e){HUB.offline=true;hubRefresh();toast("📴 離線模式：可以單人遊玩，朋友暫時無法加入");return;}
   let tries=0, nextCi=1;
   const open=()=>{
     const code=String(Math.floor(1000+Math.random()*9000));
     const peer=new Peer(MP_PREFIX+code,peerOpts());
     peer.on("open",id=>{
       NET.on=true;NET.host=true;NET.peer=peer;NET.myId=id;NET.code=code;NET.myName=mpName();
-      mpMsg("");
-      if(MP_MODE!=="coop"){PVP.cfg.mode=MP_MODE;pvpInitLobby();toast(`🌐 對戰房間已建立，房號 ${code}`);return;}
-      startGame();toast(`🌐 房間已建立，房號 ${code} —— 另一台輸入房號加入`);
+      hubRefresh(); toast(`🌐 房號 ${code} —— 朋友輸入房號就能加入`);
     });
     peer.on("connection",conn=>{
       conn.on("data",m=>{
@@ -2983,7 +3211,7 @@ async function mpHost(){
           const ci=nextCi++;
           const list=[{id:NET.myId,name:NET.myName,ci:0},...[...NET.players.values()].map(p=>({id:p.id,name:p.name,ci:p.ci}))];
           NET.conns.set(conn.peer,conn);
-          conn.send(PVP.on?{t:"welcome",from:NET.myId,you:ci,players:list,
+          conn.send(HUB.on?{t:"welcome",from:NET.myId,you:ci,players:list,hub:{cfg:HUB.cfg}}:PVP.on?{t:"welcome",from:NET.myId,you:ci,players:list,
             pvp:{cfg:PVP.cfg,phase:PVP.phase,ro:[...PVP.roster.values()].concat([{id:conn.peer,name:m.name,team:0,bot:false,k:0,d:0,c:0}])}}
             :{t:"welcome",from:NET.myId,you:ci,players:list,s:hostState()});
           for(const[id,c]of NET.conns)if(id!==conn.peer&&c.open)c.send({t:"join",from:NET.myId,id:conn.peer,name:m.name,ci});
@@ -2999,7 +3227,7 @@ async function mpHost(){
     peer.on("disconnected",()=>{ if(!peer.destroyed)setTimeout(()=>{try{peer.reconnect();}catch(e){}},1500); });
     peer.on("error",e=>{
       if(e.type==="unavailable-id"&&tries++<5){peer.destroy();open();return;}
-      if(!NET.on){mpMsg("❌ 建立房間失敗："+(e.type||e.message));setMpButtons(false);}
+      if(!NET.on){HUB.offline=true;hubRefresh();toast("📴 房間建立失敗，改為離線模式");}
       else console.warn("peer:",e);
     });
   };
@@ -3024,10 +3252,11 @@ async function mpJoin(){
         if(done)return; done=true; clearTimeout(timer);
         NET.on=true;NET.host=false;NET.peer=peer;NET.hostConn=conn;NET.myId=id;NET.code=code;NET.myName=mpName();
         for(const p of m.players)addPlayer(p.id,p.name,p.ci);
+        if(m.hub){ HUB.cfg=m.hub.cfg; mpMsg(""); enterHub(); toast(`🌐 已進入房間 ${code} 的大廳`); return; }
         if(m.pvp){
           PVP.cfg=m.pvp.cfg; PVP.roster=new Map(m.pvp.ro.map(r=>[r.id,{...r}]));
           const me=PVP.roster.get(id); PVP.myTeam=me?me.team:0;
-          mpMsg(""); pvpInitLobby(); toast(`🌐 已加入對戰房間 ${code}`);
+          mpMsg(""); enterHub(); toast(`🌐 已加入房間 ${code}，對戰進行中…`);
           return;
         }
         applyHostState(m.s,true);
@@ -3043,15 +3272,19 @@ async function mpJoin(){
     else if(!NET.on)fail("連線失敗："+(e.type||e.message));
   });
 }
-document.getElementById("mpHostBtn").onclick=()=>mpHost();
+document.getElementById("mpHostBtn").onclick=()=>{audio();SFX.ui();mpHost();};
 document.getElementById("mpJoinBtn").onclick=()=>mpJoin();
 let MP_MODE="coop";
-document.querySelectorAll(".modeBtn").forEach(b=>b.onclick=()=>{
-  MP_MODE=b.dataset.mode; document.querySelectorAll(".modeBtn").forEach(x=>x.classList.toggle("on",x===b));
-  document.body.classList.toggle("mpPvp",MP_MODE!=="coop");
-  document.getElementById("mpHostBtn").textContent=MP_MODE==="coop"?"建立房間":"建立對戰房間";
-});
-document.getElementById("mpPractice").onclick=()=>{ NET.myName=mpName(); PVP.cfg.mode=MP_MODE==="coop"?"tdm":MP_MODE; pvpInitLobby(); };
+// 音量設定
+(function(){const vm=document.getElementById("volMusic"),vs=document.getElementById("volSfx"),mb=document.getElementById("volMute");
+  const sync=()=>{vm.value=Math.round(AUD.vol.music*100);vs.value=Math.round(AUD.vol.sfx*100);mb.textContent=AUD.muted?"🔇 配樂已關（M）":"🎶 配樂開（M）";
+    const t=document.getElementById("tbSnd");if(t)t.textContent=AUD.muted?"🔇":"🎵";};
+  vm.oninput=()=>{AUD.vol.music=vm.value/100;applyVolume();};
+  vs.oninput=()=>{AUD.vol.sfx=vs.value/100;applyVolume();SFX.ui();};
+  window.toggleMusic=()=>{audio();AUD.muted=!AUD.muted;applyVolume();sync();toast(AUD.muted?"🔇 配樂關閉":"🎵 配樂開啟");};
+  mb.onclick=toggleMusic; sync();})();
+document.getElementById("helpBtn").onclick=()=>{const h=document.getElementById("helpBox");h.style.display=h.style.display==="block"?"none":"block";};
+document.getElementById("hubBtn").onclick=()=>{ if(NET.on&&!NET.host)return toast("只有房主可以帶大家回大廳"); backToHub(); };
 
 /* ================================================================
    PvP 對戰：專屬競技場（DIM 2）· 團隊死鬥 / 搶旗 · AI 機器人
@@ -3695,7 +3928,7 @@ function setupLobbyUI(){
   document.getElementById("pvStart").onclick=()=>pvpStartMatch();
   document.getElementById("pvLeave").onclick=()=>location.reload();
   document.getElementById("peAgain").onclick=()=>pvpAgain();
-  document.getElementById("peMenu").onclick=()=>location.reload();
+  document.getElementById("peMenu").onclick=()=>{ if(NET.on&&!NET.host)return location.reload(); backToHub(); };
 }
 
 /* ---------- 開局 ---------- */
@@ -3726,6 +3959,9 @@ function pvpStartMatch(){
 }
 const BOT_NAMES=["阿鐵","小狙","方塊仔","閃電","石頭","火把","鑽頭","雷達","鋼盔","飛毛腿","黑曜","沙包"];
 function pvpBegin(m){
+  if(HUB.on)SFX.whoosh();
+  HUB.on=false; document.body.classList.remove("hub"); PVP.on=true; document.body.classList.add("pvp");
+  document.getElementById("tbCraft").textContent="📋";
   PVP.cfg=m.cfg; PVP.phase="play"; PVP.winner=-2;
   PVP.roster=new Map(m.ro.map(r=>[r.id,{...r}]));
   const me=PVP.roster.get(PVP.me()); PVP.myTeam=me?me.team:0;
@@ -3835,7 +4071,7 @@ function onKill(m){
   const ic=m.w==="sniper"?"🎯":m.w==="sword"?"🗡":m.w==="pistol"?"🔫":"💀";
   feedPush(killer?`<span style="color:${TEAM_CSS[teamOfP(m.by)]||"#fff"}">${escH(killer)}</span> ${ic}${m.hs?"💥":""} <span style="color:${TEAM_CSS[teamOfP(m.victim)]||"#fff"}">${escH(vic)}</span>`:
     `💀 <span style="color:${TEAM_CSS[teamOfP(m.victim)]||"#fff"}">${escH(vic)}</span>`,true);
-  if(m.by===PVP.me()&&m.victim!==PVP.me()){hitMarker(!!m.hs,true);bigMsg(`擊倒 ${vic}${m.hs?"（爆頭）":""}`);}
+  if(m.by===PVP.me()&&m.victim!==PVP.me()){hitMarker(!!m.hs,true);SFX.kill();bigMsg(`擊倒 ${vic}${m.hs?"（爆頭）":""}`);}
 }
 function feedPush(html,raw){
   PVP.feed.push({h:raw?html:escH(html),t:6}); if(PVP.feed.length>6)PVP.feed.shift(); renderFeed();
@@ -3943,8 +4179,8 @@ function givePick(id,type){
   else if(NET.host){const c=NET.conns.get(id);if(c&&c.open)c.send({t:"Ppick",to:id,type,from:NET.myId});}
 }
 function applyPick(type){
-  if(type==="heal"){P.hp=Math.min(100,P.hp+50);SFX.drink();toast("❤️ +50 HP");}
-  else{P.sniper=1;counts.sammo=5;SFX.chime();toast("🎯 拿到狙擊槍！（5 發 · 右鍵/「瞄準」開鏡）");
+  if(type==="heal"){P.hp=Math.min(100,P.hp+50);SFX.pickup();toast("❤️ +50 HP");}
+  else{P.sniper=1;counts.sammo=5;SFX.pickup();toast("🎯 拿到狙擊槍！（5 發 · 右鍵/「瞄準」開鏡）");
     selectSlot(HOTBAR.findIndex(h=>h.kind==="sniper"));VM.rebuild();}
   updateHUD();
 }
@@ -4164,8 +4400,9 @@ function showShot(a,b,w,by){
   const sh=by&&(PVP.bots.get(by)||(NET.on&&NET.players.get(by))); if(sh&&sh.g)avatarFlash(sh.g);
   const A=new THREE.Vector3(...a),Bv=new THREE.Vector3(...b);
   addTracer(A,Bv,w==="sniper"?0xc8f4ff:0xffe08a,w==="sniper"?0.45:0.08,w==="sniper");
-  const d=Math.hypot(a[0]-P.x,a[2]-P.z);
-  SFX.far(1-d/90); if(w==="sniper"&&d<70)setTimeout(()=>SFX.far(0.6),80);
+  const dx=a[0]-P.x,dz=a[2]-P.z,d=Math.hypot(dx,dz)||1;
+  const pan=(dx*Math.cos(P.yaw)-dz*Math.sin(P.yaw))/d;          // 依聲源在左右哪邊做立體聲定位
+  SFX.far(1-d/(w==="sniper"?140:90),pan*0.85,w);
 }
 
 /* ---------- 每幀 ---------- */
@@ -4219,13 +4456,14 @@ function pvpEnd(m){
     (mvp?`<br>⭐ MVP：<b style="color:${TEAM_CSS[mvp.team]}">${escH(mvp.name)}</b>（${mvp.k} 殺 / ${mvp.d} 死${PVP.cfg.mode==="ctf"?` / ${mvp.c} 旗`:""}）`:"")+
     `<div class="board">${boardHTML()}</div>`;
   document.getElementById("peAgain").style.display=PVP.auth()?"inline-block":"none";
+  document.getElementById("peMenu").textContent=PVP.auth()?"🏠 回大廳":"🚪 離開房間";
   document.getElementById("peWait").style.display=PVP.auth()?"none":"block";
   show("pvpEnd",true); show("pauseOv",false);
-  if(win)SFX.win(); else SFX.hurt();
+  if(win)SFX.win(); else SFX.lose();
 }
 function pvpAgain(){
   if(!PVP.auth())return;
-  pvpBroadcast({t:"Pagain"}); toLobby();
+  show("pvpEnd",false); pvpStartMatch();          // 同樣的隊伍與設定直接再開一場
 }
 function toLobby(){
   PVP.phase="lobby"; show("pvpEnd",false);
@@ -4317,6 +4555,265 @@ function pvpOnLeave(id){
   if(PVP.phase==="lobby")lobbySync(); else pvpBroadcast({t:"Proster",ro:[...PVP.roster.values()]});
 }
 
+
+/* ================================================================
+   大廳廣場（Hub）：走進傳送門選模式 / 地圖 / 隊伍
+   用競技場的體素系統（DIM 2、地圖 id = "hub"）
+   ================================================================ */
+const HUB_GATES=[{id:"arena",c:-14},{id:"town",c:0},{id:"canyon",c:14}];
+const HUB_DIFF=[{v:0,x0:-13,ic:"🙂",nm:"簡單"},{v:1,x0:-10,ic:"😠",nm:"普通"},{v:2,x0:-7,ic:"💀",nm:"困難"}];
+const HUB_SIZE=[1,2,3,4,5].map((v,i)=>({v,x:6+i*2}));
+MAPS.hub={id:"hub",nm:"大廳廣場",ic:"🏠",desc:"",
+  bounds:{X:30,Z:26,FY:20}, flags:[[-1,0],[1,0]], spawns:[[0,-12]], lanes:[[[0,0],[1,0]]], picks:[],
+  theme:{top:0x140d3a,hor:0x7a58b8,bot:0x2a1d4a,fog:0x5a4490,fogNear:60,fogFar:170,sunDir:[-0.4,0.35,-0.8],sunCol:0xffd2a0,sunGlow:0xffb0e0,sunSize:0.993,sunI:0.7,
+    amb:0xb8a8e8,ambI:0.55,hemiSky:0xc8b8ff,hemiGround:0x3a2a50,hemiI:0.45,glow:1.1,stars:0.7},
+  build(S){const{box,set,FY}=S;
+    box(-60,60,10,FY-1,-40,40,B.STONE); box(-60,60,9,9,-40,40,B.BEDROCK);
+    for(let x=-60;x<=60;x++)for(let z=-40;z<=40;z++){const patch=hash2(Math.floor((x+60)/3)*7+3,Math.floor((z+40)/3)*5+1)<0.3&&hash2(x*3+1,z*7+5)<0.6;
+      set(x,FY,z,patch?B.FLOWER:B.GRASS);}
+    // 中央廣場
+    for(let x=-11;x<=11;x++)for(let z=-11;z<=11;z++){const r=Math.hypot(x,z);
+      if(r<=10.5)set(x,FY,z,(Math.abs(r-10)<0.6||Math.abs(r-6)<0.6)?B.SMOOTH:B.PATH);}
+    S.path([[-10,0],[-20,0]],2,B.PATH); S.path([[0,-10],[0,-14]],2,B.PATH);
+    for(const g of HUB_GATES)S.path([[g.c*0.5,9],[g.c,16]],2,B.PATH);
+    // 外圍矮牆 + 燈柱
+    const wall=(x0,x1,z0,z1)=>{box(x0,x1,FY+1,FY+3,z0,z1,B.SMOOTH);box(x0,x1,FY+1,FY+1,z0,z1,B.MOSSY);box(x0,x1,FY+3,FY+3,z0,z1,B.GOLDT);};
+    wall(-30,30,-26,-26);wall(-30,30,26,26);wall(-30,-30,-26,26);wall(30,30,-26,26);
+    for(let x=-30;x<=30;x+=6)for(const z of[-26,26]){box(x,x,FY+1,FY+4,z,z,B.SMOOTH);set(x,FY+5,z,B.LANTERN);}
+    for(let z=-20;z<=20;z+=8)for(const x of[-30,30]){box(x,x,FY+1,FY+4,z,z,B.SMOOTH);set(x,FY+5,z,B.LANTERN);}
+    // 噴泉
+    for(let x=-3;x<=3;x++)for(let z=-3;z<=3;z++){const r=Math.hypot(x,z);if(r<=3.3){set(x,FY,z,B.SMOOTH);set(x,FY+1,z,r>2.3?B.SMOOTH:B.WATER);}}
+    box(0,0,FY+1,FY+3,0,0,B.SMOOTH); set(0,FY+4,0,B.GLOW);
+    // 協作之門（西側，面向東）
+    box(-25,-24,FY+1,FY+7,-4,4,B.FRAME);                          // 門後牆（深色黑曜石，讓漩渦更顯色）
+    for(const z of[-5,5]){box(-24,-23,FY+1,FY+8,z,z,B.SMOOTH);box(-24,-23,FY+1,FY+1,z,z,B.MOSSY);set(-23,FY+9,z,B.LANTERN);}
+    box(-24,-23,FY+8,FY+9,-5,5,B.GOLDT); box(-24,-23,FY+10,FY+10,-3,3,B.SMOOTH); set(-24,FY+11,0,B.GLOW);
+    for(let x=-22;x<=-20;x++)for(let z=-3;z<=3;z++)set(x,FY,z,(Math.abs(z)===3||x===-20)?B.GOLDT:B.FLOWER);
+    // 對戰之門（南側三座，面向北）
+    for(const g of HUB_GATES){const c=g.c;
+      box(c-3,c+3,FY+1,FY+7,23,23,B.FRAME);                        // 門後牆
+      for(let x=c-3;x<=c+3;x++)for(let z=17;z<=22;z++)set(x,FY,z,x<c?B.RED:x>c?B.BLUE:B.GOLDT);
+      if(g.id==="arena"){
+        for(const px of[c-4,c+4]){box(px,px,FY+1,FY+8,21,22,B.SMOOTH);box(px,px,FY+3,FY+3,21,22,px<c?B.RGLOW:B.BGLOW);box(px,px,FY+6,FY+6,21,22,px<c?B.RGLOW:B.BGLOW);}
+        box(c-4,c+4,FY+8,FY+9,21,22,B.GOLDT); box(c-2,c+2,FY+10,FY+10,21,22,B.SMOOTH);
+        for(const px of[c-4,c+4])set(px,FY+9,21,B.LANTERN);
+      }else if(g.id==="town"){
+        for(const px of[c-4,c+4]){box(px,px,FY+1,FY+8,21,22,B.DARKWOOD);set(px,FY+9,21,B.LANTERN);}
+        box(c-4,c+4,FY+8,FY+8,21,22,B.DARKWOOD);
+        for(let k=0;k<3;k++)for(let x=c-5+k;x<=c+5-k;x++)for(let z=20;z<=23;z++)set(x,FY+9+k,z,x<c?B.ROOF_R:x>c?B.ROOF_B:B.GOLDT);
+      }else{
+        for(const px of[c-4,c+4]){box(px,px,FY+1,FY+8,21,22,B.DLOG);set(px,FY+9,21,B.SNOWLEAF);}
+        box(c-4,c+4,FY+8,FY+9,21,22,B.SNOWSLATE); box(c-4,c+4,FY+10,FY+10,21,22,B.SNOW);
+        S.pine(c-6,19,4); S.pine(c+6,19,4);
+      }
+    }
+    // 模式踏板（⚔ 死鬥 / 🚩 搶旗）
+    for(const x0 of[-4,2])for(let x=x0;x<=x0+2;x++)for(let z=10;z<=12;z++)set(x,FY,z,(x===x0+1&&z===11)?B.LANTERN:B.GOLDT);
+    // 難度踏板 / 人數踏板
+    for(const d of HUB_DIFF)for(let x=d.x0;x<=d.x0+1;x++)for(let z=7;z<=8;z++)set(x,FY,z,B.SMOOTH);
+    for(const s of HUB_SIZE)for(let z=7;z<=8;z++)set(s.x,FY,z,B.SMOOTH);
+    // 樹與東側水晶台
+    for(const[x,z]of[[-26,-20],[-18,-22],[-26,14],[-20,22],[26,-20],[18,-22],[26,14],[22,22],[-14,-20],[14,-20]])S.tree(x,z,4,B.LEAF,B.WOOD);
+    box(19,23,FY+1,FY+1,-8,-4,B.SMOOTH); box(20,22,FY+2,FY+2,-7,-5,B.GOLDT);
+  },
+  decor(D){
+    const FY=ARENA.FY;
+    D.mountains(24,150,230,40,90,0x3a2a6a,0x6a4aa0,false); D.islands(7,0x7ad06a); D.clouds(8,70,100,0xe8c8ff,120);
+    D.crystalBeacon(21.5,FY+6,-5.5,0xc890ff);
+    D.particles(260,[-30,30,FY+1,FY+16,-26,26],0xe0c8ff,0.32,"mote");
+    D.autoGlow();
+    HUB.decor={portals:[],labels:{},plates:[]};
+    // 傳送門漩渦
+    const swirl=(w,h,col,x,y,z,rotY)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:hubSwirlTex(col),transparent:true,
+        depthWrite:false,side:THREE.DoubleSide,fog:false}));m.position.set(x,y,z);m.rotation.y=rotY||0;D.add(m);
+      const tex=m.material.map; tex.center.set(0.5,0.5); const sp=0.4+Math.random()*0.3; D.anim(t=>{tex.rotation=t*sp;m.material.opacity=0.75+Math.sin(t*2)*0.15;});return m;};
+    swirl(9,7,"#2fd884",-22.6,FY+4.6,0.5,Math.PI/2);
+    D.glow(-21.5,FY+3.5,0.5,0x9dffc0,9,1.2);
+    D.particles(40,[-23,-20,FY+1,FY+7,-3,4],0xc8ffd8,0.3,"mote");
+    for(const g of HUB_GATES){const c=g.c+0.5;
+      swirl(3.6,7,"#e8402a",c-1.8,FY+4.5,22.4,0); swirl(3.6,7,"#2f6fe8",c+1.8,FY+4.5,22.4,0);
+      D.glow(c-1.8,FY+3.5,21.6,0xff6040,4,1.4); D.glow(c+1.8,FY+3.5,21.6,0x4080ff,4,1.4);
+      if(g.id==="arena")D.crystalBeacon(c,FY+12.3,21.5,0x7be8ff);
+      if(g.id==="town"){D.lanternString([c-4,FY+7.6,20.6],[c+4,FY+7.6,20.6],3);}
+      if(g.id==="canyon")D.particles(60,[c-6,c+6,FY+1,FY+12,16,23],0xffffff,0.25,"snow");
+      HUB.decor.labels[g.id]=hubLabel(D,c,FY+14.2,21.5,MAPS[g.id].ic+" "+MAPS[g.id].nm,"",1.45);
+      hubLabel(D,c-1.8,FY+1.6,18.5,"紅","",0.55,"#ff8a70"); hubLabel(D,c+1.8,FY+1.6,18.5,"藍","",0.55,"#7fb2ff");
+    }
+    HUB.decor.labels.coop=hubLabel(D,-22.5,FY+12.4,0.5,"🤝 協作冒險","打水晶、闖終界",1.45);
+    // 踏板圖示
+    const plate=(kind,v,x,z,ic,txt,sc)=>{const sp=hubLabel(D,x,FY+2.1,z,ic,txt,sc||0.95);sp.userData.base=sc||0.95;const ring=D.glow(x,FY+0.3,z,0xffe08a,3.2);ring.visible=false;
+      HUB.decor.plates.push({kind,v,sp,ring});};
+    plate("mode","tdm",-2.5,11.5,"⚔","死鬥",1.25); plate("mode","ctf",3.5,11.5,"🚩","搶旗",1.25);
+    for(const d of HUB_DIFF)plate("diff",d.v,d.x0+1,8,d.ic,d.nm,1.0);
+    for(const s of HUB_SIZE)plate("size",s.v,s.x+0.5,8,String(s.v),"",0.8);
+    hubLabel(D,-9,FY+4.4,8,"難度","",0.45,"#d8c8ff"); hubLabel(D,10.5,FY+4.4,8,"每隊人數","",0.45,"#d8c8ff");
+    // 房號全息看板
+    HUB.decor.holo=hubHolo(D,0.5,FY+5.2,-21);
+    D.anim(t=>{for(const l of Object.values(HUB.decor.labels))l.position.y=l.userData.y0+Math.sin(t*1.5+l.userData.y0)*0.15;});
+  }
+};
+MAP_LIST.push("hub");
+// 漩渦貼圖
+const _swirlCache={};
+function hubSwirlTex(col){ if(_swirlCache[col])return _swirlCache[col];
+  const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
+  const r=g.createRadialGradient(64,64,0,64,64,64);r.addColorStop(0,"rgba(255,255,255,0.9)");r.addColorStop(0.18,col);r.addColorStop(0.85,col);r.addColorStop(1,"rgba(0,0,0,0)");
+  g.fillStyle=r;g.fillRect(0,0,128,128);
+  g.strokeStyle="rgba(255,255,255,0.45)";g.lineWidth=4;
+  for(let k=0;k<5;k++){g.beginPath();for(let a=0;a<6;a+=0.1){const rr=a*9;g.lineTo(64+Math.cos(a+k*1.26)*rr,64+Math.sin(a+k*1.26)*rr);}g.stroke();}
+  return _swirlCache[col]=new THREE.CanvasTexture(c);}
+// 浮空文字標籤（圖示＋短字）
+function hubLabel(D,x,y,z,big,small,scale,color){
+  const c=document.createElement("canvas");c.width=512;c.height=160;const g=c.getContext("2d");
+  const draw=(b,sm)=>{g.clearRect(0,0,512,160);
+    g.font="bold 64px 'Microsoft JhengHei','PingFang TC',sans-serif";g.textAlign="center";g.textBaseline="middle";
+    g.shadowColor="rgba(0,0,0,0.8)";g.shadowBlur=12;g.fillStyle=color||"#fff6d8";g.fillText(b,256,sm?58:80);
+    if(sm){g.font="36px 'Microsoft JhengHei','PingFang TC',sans-serif";g.fillStyle="#e8dcff";g.fillText(sm,256,122);}
+    tex.needsUpdate=true;};
+  const tex=new THREE.CanvasTexture(c);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false,fog:false}));
+  const s=scale||1; sp.scale.set(6.4*s,2*s,1); sp.position.set(x,y,z); sp.userData={y0:y,draw}; D.add(sp); draw(big,small);
+  return sp;}
+function hubHolo(D,x,y,z){
+  const c=document.createElement("canvas");c.width=512;c.height=256;const g=c.getContext("2d");
+  const tex=new THREE.CanvasTexture(c);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false,fog:false,blending:THREE.AdditiveBlending}));
+  sp.scale.set(6.4,3.2,1); sp.position.set(x,y,z); D.add(sp);
+  sp.userData.draw=(title,code,names)=>{g.clearRect(0,0,512,256);
+    const gr=g.createLinearGradient(0,0,0,256);gr.addColorStop(0,"rgba(90,200,255,0.28)");gr.addColorStop(1,"rgba(160,90,255,0.18)");
+    g.fillStyle=gr;g.beginPath();g.roundRect?g.roundRect(8,8,496,240,28):g.rect(8,8,496,240);g.fill();
+    g.strokeStyle="rgba(170,230,255,0.8)";g.lineWidth=4;g.stroke();
+    g.textAlign="center";g.textBaseline="middle";g.fillStyle="#bfefff";g.font="34px 'Microsoft JhengHei','PingFang TC',sans-serif";g.fillText(title,256,52);
+    g.fillStyle="#ffffff";g.font="bold 92px 'Courier New',monospace";g.fillText(code,256,128);
+    g.fillStyle="#e8dcff";g.font="30px 'Microsoft JhengHei','PingFang TC',sans-serif";g.fillText(names,256,206);
+    tex.needsUpdate=true;};
+  D.anim(t=>{sp.material.opacity=0.85+Math.sin(t*3)*0.1;sp.position.y=y+Math.sin(t*1.2)*0.12;});
+  return sp;}
+
+/* ---------- 狀態 ---------- */
+const HUB={on:false,cfg:{mode:"tdm",diff:1,size:3},decor:null,zone:null,lastPlate:null,stateT:0,rd:null,holoKey:"",
+  auth(){return !NET.on||NET.host;}};
+function hubZoneAt(x,z){
+  const fx=Math.floor(x),fz=Math.floor(z);
+  if(fx>=-23&&fx<=-20&&fz>=-3&&fz<=3)return{id:"coop",kind:"portal"};
+  for(const g of HUB_GATES)if(fx>=g.c-3&&fx<=g.c+3&&fz>=17&&fz<=22)return{id:g.id,kind:"portal",side:fx<g.c?0:fx>g.c?1:-1};
+  if(fz>=10&&fz<=12){if(fx>=-4&&fx<=-2)return{kind:"plate",k:"mode",v:"tdm"};if(fx>=2&&fx<=4)return{kind:"plate",k:"mode",v:"ctf"};}
+  if(fz>=7&&fz<=8){for(const d of HUB_DIFF)if(fx>=d.x0&&fx<=d.x0+1)return{kind:"plate",k:"diff",v:d.v};
+    for(const s of HUB_SIZE)if(fx===s.x)return{kind:"plate",k:"size",v:s.v};}
+  return null;
+}
+function enterHub(){
+  HUB.on=true; PVP.on=false; PVP.phase="off";
+  document.body.classList.add("hub"); document.body.classList.remove("pvp","scoped");
+  for(const b of PVP.bots.values())scene.remove(b.g); PVP.bots.clear();
+  for(const f of PVP.flags)if(f.g)scene.remove(f.g); PVP.flags=[];
+  for(const p of PVP.pickups)if(p.g)scene.remove(p.g); PVP.pickups=[];
+  for(const id of["pvpEnd","pvpLobby","deathOv","winOv","pauseOv","startOv","craftOv"])show(id,false);
+  document.getElementById("pvpHud").style.display="none"; document.getElementById("pvpDeath").style.display="none";
+  document.getElementById("killFeed").innerHTML="";
+  dead=false; won=false; menuOpen=false; releaseInputs();
+  const changed=setMap("hub");
+  if(DIM!==2||changed){DIM=2;resetChunks();for(const e of enemies)scene.remove(e.g);enemies.length=0;syncDimVisuals();}
+  warmArena(); applyTheme();
+  // 回大廳時把多人頭像恢復成原本顏色
+  if(NET.on)for(const pl of NET.players.values()){const pos=pl.g.position.clone();scene.remove(pl.g);pl.col=AV_COLORS[(pl.ci||0)%AV_COLORS.length];pl.team=undefined;
+    pl.g=makeAvatar(pl.name,pl.col,false);pl.g.position.copy(pos);}
+  P.x=0.5+(Math.random()-0.5)*4; P.z=-12.5; P.y=surfaceY(Math.floor(P.x),Math.floor(P.z))+1.05; P.vx=P.vy=P.vz=0;
+  P.yaw=Math.PI; P.pitch=-0.08; P.hp=P.maxHp; camera.position.set(P.x,P.y+EYE,P.z);
+  HUB.rd=null; HUB.zone=null; HUB.lastPlate=null; HUB.holoKey="";
+  started=true; audio(); lock();
+  if(!TOUCH&&!locked){document.querySelector("#pauseOv h1").textContent="🏠 大廳";show("pauseOv",true);}
+  hubRefresh(); if(typeof MUSIC!=="undefined")MUSIC.play("hub");
+}
+function hubSetCfg(k,v){
+  if(HUB.auth()){ if(HUB.cfg[k]===v)return; HUB.cfg[k]=v; hubRefresh(); hubBroadcast(); SFX.click(); }
+  else NET.send({t:"Hcfg",k,v});
+}
+function hubBroadcast(){ if(NET.on&&NET.host)NET.send({t:"Hstate",cfg:HUB.cfg,rd:HUB.rd}); }
+function hubCfgText(){const c=HUB.cfg,d=HUB_DIFF[c.diff];return `${c.mode==="ctf"?"🚩 搶旗":"⚔ 死鬥"} · ${d.ic}${d.nm} · ${c.size}v${c.size}`;}
+function hubRefresh(){
+  if(!HUB.decor)return;
+  for(const p of HUB.decor.plates){const on=HUB.cfg[p.kind]===p.v;p.ring.visible=on;p.sp.material.opacity=on?1:0.55;p.sp.scale.setScalar(1);
+    const s=p.sp.userData.base||0.9; p.sp.scale.set(6.4*s*(on?1.15:1),2*s*(on?1.15:1),1);}
+  for(const g of HUB_GATES){const l=HUB.decor.labels[g.id];if(l)l.userData.draw(MAPS[g.id].ic+" "+MAPS[g.id].nm,hubCfgText());}
+  const names=[NET.myName||mpName(),...(NET.on?[...NET.players.values()].map(p=>p.name):[])];
+  const code=NET.on?NET.code:(HUB.offline?"離線":"····");
+  const key=code+names.join(",");
+  if(HUB.decor.holo&&key!==HUB.holoKey){HUB.holoKey=key;
+    HUB.decor.holo.userData.draw(NET.on?"房號 · 朋友輸入即可加入":(HUB.offline?"離線模式：只能單人":"建立房間中…"),code,"👥 "+names.join("、"));}
+}
+// 大廳裡的人（權威端用）
+function hubHumans(){
+  const out=[{id:PVP.me(),name:NET.myName||mpName(),x:P.x,z:P.z}];
+  if(NET.on)for(const pl of NET.players.values())out.push({id:pl.id,name:pl.name,x:pl.tx,z:pl.tz,inHub:pl.has&&pl.d===2&&pl.mp==="hub"});
+  return out;
+}
+function hubUpdate(dt){
+  if(!HUB.on)return;
+  // 自己踩到的區域
+  const z=hubZoneAt(P.x,P.z);
+  if(z&&z.kind==="plate"){const key=z.k+z.v;if(HUB.lastPlate!==key){HUB.lastPlate=key;hubSetCfg(z.k,z.v);}} else HUB.lastPlate=null;
+  if(HUB.auth()){
+    const hs=hubHumans(); let common=null, all=true;
+    for(const h of hs){const zz=hubZoneAt(h.x,h.z);if(!zz||zz.kind!=="portal"||(h.inHub===false)){all=false;break;}
+      if(common===null)common=zz.id; else if(common!==zz.id){all=false;break;}}
+    const focus=(z&&z.kind==="portal")?z.id:(hs.map(h=>hubZoneAt(h.x,h.z)).find(zz=>zz&&zz.kind==="portal")||{}).id||null;
+    const inCount=hs.filter(h=>{const zz=hubZoneAt(h.x,h.z);return zz&&zz.kind==="portal"&&zz.id===focus;}).length;   // 只算站在同一扇門的人
+    if(all&&common){
+      if(!HUB.rd||HUB.rd.z!==common||!HUB.rd.go){HUB.rd={z:common,n:hs.length,need:hs.length,cd:hs.length>1?3:1.2,go:true};SFX.chime();}
+      HUB.rd.cd-=dt;
+      if(HUB.rd.cd<=0){hubLaunch(common,hs);return;}
+    }else HUB.rd=focus?{z:focus,n:inCount,need:hs.length,cd:0,go:false}:null;
+    HUB.stateT-=dt; if(HUB.stateT<=0){HUB.stateT=0.2;hubBroadcast();}
+  }
+  hubRefresh(); renderHubBanner();
+}
+function renderHubBanner(){
+  const el=document.getElementById("hubBanner"), rd=HUB.rd;
+  if(!rd){el.innerHTML=`<div class="hint">${NET.on?`房號 <b style="color:#ffd86b;letter-spacing:2px">${NET.code}</b> · `:""}走進傳送門出發 ✨</div>`;return;}
+  const nm=rd.z==="coop"?"🤝 協作冒險":MAPS[rd.z].ic+" "+MAPS[rd.z].nm, sub=rd.z==="coop"?"":hubCfgText();
+  el.innerHTML=`<div class="dest">${nm}</div>${sub?`<div class="sub">${sub}</div>`:""}`+
+    (rd.go?(()=>{const c=Math.max(1,Math.ceil(rd.cd));if(HUB._lc!==c){HUB._lc=c;SFX.beep(false);}return `<div class="cd">${c}</div>`;})():`<div class="wait">${rd.n} / ${rd.need} 就緒 · 等大家走進同一扇門</div>`);
+}
+function hubLaunch(zid,hs){
+  HUB.rd=null; HUB._lc=null; SFX.whoosh();
+  if(zid==="coop"){ hubStartCoop(); if(NET.on&&NET.host)NET.send({t:"Hcoop",s:hostState()}); return; }
+  // 對戰：依站的紅/藍半邊分隊（站中線的分到人少的一邊）
+  const g=HUB_GATES.find(g=>g.id===zid);
+  PVP.cfg={mode:HUB.cfg.mode,diff:HUB.cfg.diff,size:HUB.cfg.size,map:zid};
+  PVP.roster=new Map(); const cnt=[0,0], mid=[];
+  for(const h of hs){const fx=Math.floor(h.x);let t=fx<g.c?0:fx>g.c?1:-1;if(t<0){mid.push(h);continue;}cnt[t]++;PVP.roster.set(h.id,{id:h.id,name:h.name,team:t,bot:false,k:0,d:0,c:0});}
+  for(const h of mid){const t=cnt[0]<=cnt[1]?0:1;cnt[t]++;PVP.roster.set(h.id,{id:h.id,name:h.name,team:t,bot:false,k:0,d:0,c:0});}
+  PVP.cfg.size=Math.max(PVP.cfg.size,cnt[0],cnt[1]);
+  HUB.on=false; document.body.classList.remove("hub");
+  PVP.on=true; document.body.classList.add("pvp"); document.getElementById("tbCraft").textContent="📋";
+  pvpStartMatch();
+}
+function hubStartCoop(){
+  HUB.on=false; PVP.on=false; document.body.classList.remove("hub","pvp");
+  document.getElementById("tbCraft").textContent="⚒";
+  DIM=0; resetChunks(); leaveThemeIfNeeded(); syncDimVisuals();
+  P.x=SPAWN.x;P.z=SPAWN.z;warmup(P.x,P.z,2);P.y=surfaceY(Math.floor(P.x),Math.floor(P.z))+1.05;P.vx=P.vy=P.vz=0;
+  updateHUD(); toast("🤝 協作冒險開始！"+(NET.on?"朋友可以隨時加入":"")); SFX.chime();
+  if(typeof MUSIC!=="undefined")MUSIC.play("coop");
+}
+// 協作／對戰中回大廳（房主或單機）
+function backToHub(){
+  if(NET.on&&!NET.host)return;
+  if(NET.on)NET.send({t:"Hhub"});
+  enterHub();
+}
+function hubMsg(m,conn){
+  const host=NET.host; if(host&&conn)m.from=conn.peer;
+  switch(m.t){
+    case "Hcfg": if(host&&HUB.on){HUB.cfg[m.k]=m.v;hubRefresh();hubBroadcast();} break;
+    case "Hstate": if(!host){HUB.cfg=m.cfg;HUB.rd=m.rd;} break;
+    case "Hcoop": if(!host){SFX.whoosh();hubStartCoop();applyHostState(Object.assign({},m.s,{hostPos:null}),false);
+        P.x=SPAWN.x+1.5;P.z=SPAWN.z;warmup(P.x,P.z,2);P.y=surfaceY(Math.floor(P.x),Math.floor(P.z))+1.05;} break;
+    case "Hhub": if(!host)enterHub(); break;
+  }
+}
+
 setupLobbyUI();
 
 
@@ -4359,6 +4856,10 @@ function loop(){
   updateScope(dt);
   if(started&&NET.on)NET.update(dt,running);
   if(started&&PVP.on)pvpUpdate(dt);
+  if(started&&HUB.on)hubUpdate(dt);
+  MUSIC.auto();
+  document.body.classList.toggle("canHub",started&&!HUB.on&&(!NET.on||NET.host));
+  document.body.classList.toggle("title",!started);
   if(started)updateDecor(dt);
   renderer.clear();
   renderer.render(scene,camera);
