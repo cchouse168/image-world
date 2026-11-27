@@ -55,6 +55,8 @@
     border:2px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
     display:flex;align-items:center;justify-content:center;flex-direction:column;
     font-size:11px;color:#cfe0ea;}
+  .slot.newItem{animation:newItem 1.2s ease-out 2;}
+  @keyframes newItem{0%{box-shadow:0 0 0 0 rgba(255,214,90,.95);transform:translateY(-6px) scale(1.12);}100%{box-shadow:0 0 18px 6px rgba(255,214,90,0);transform:none;}}
   .slot.sel{border-color:#7be8ff;box-shadow:0 0 12px rgba(123,232,255,.6),inset 0 0 8px rgba(123,232,255,.2);
     background:rgba(123,232,255,.08);transform:translateY(-2px);transition:transform .1s;}
   .slot .ic{font-size:18px;line-height:1;}
@@ -1443,8 +1445,7 @@ document.addEventListener("keydown",e=>{
   keys[e.code]=true;
   if(!locked||dead||won)return;
   if(e.code.startsWith("Digit")){const n=+e.code.slice(5);
-    if(PVP.on){const v=hbVisible();if(n>=1&&n<=v.length)selectSlot(v[n-1]);}
-    else if(n>=1&&n<=9)selectSlot(n-1);}
+    const v=hbVisible();if(n>=1&&n<=v.length)selectSlot(v[n-1]);}
   if(e.code==="KeyH")usePotion("heal");
   if(e.code==="KeyT"&&locked&&!dead&&!won&&!PVP.on)tpToMate();
   if(e.code==="KeyM"&&started)toggleMusic();
@@ -1453,8 +1454,7 @@ document.addEventListener("keydown",e=>{
 });
 document.addEventListener("keyup",e=>{keys[e.code]=false; if(e.code==="Tab"&&PVP.on)setBoard(false);});
 document.addEventListener("wheel",e=>{ if(!locked)return;
-  if(PVP.on){const v=hbVisible();let i=v.indexOf(selSlot);i=(i+(e.deltaY>0?1:-1)+v.length)%v.length;selectSlot(v[i]);return;}
-  selectSlot((selSlot+(e.deltaY>0?1:-1)+HOTBAR.length)%HOTBAR.length); });
+  const v=hbVisible();let i=v.indexOf(selSlot);i=(i+(e.deltaY>0?1:-1)+v.length)%v.length;selectSlot(v[i]); });
 document.addEventListener("contextmenu",e=>e.preventDefault());
 document.addEventListener("pointerlockchange",()=>{
   if(TOUCH)return;
@@ -1468,7 +1468,12 @@ document.addEventListener("mousemove",e=>{
   P.yaw-=e.movementX*sens;
   P.pitch=Math.max(-1.55,Math.min(1.55,P.pitch-e.movementY*sens));
 });
+// iPad：點按鈕後瀏覽器會補發「模擬滑鼠事件」，不能把它當成左鍵攻擊/挖掘
+let lastTouchT=-1e9;
+for(const ev of["touchstart","touchend"])document.addEventListener(ev,()=>{lastTouchT=performance.now();},{capture:true,passive:true});
+const fromTouch=e=>(e.sourceCapabilities&&e.sourceCapabilities.firesTouchEvents)||performance.now()-lastTouchT<900;
 document.addEventListener("mousedown",e=>{
+  if(fromTouch(e))return;
   if(!locked)return; audio();
   if(e.button===0){mouseDown=true; tryAttack();}
   if(e.button===2)rightClick();
@@ -1632,7 +1637,7 @@ function setBlock(x,y,z,id){
 }
 function updateMining(dt){
   const bar=document.getElementById("mineBar"),fill=document.getElementById("mineFill");
-  if(!mouseDown||dead||won||HOTBAR[selSlot].kind==="gun"||HOTBAR[selSlot].kind==="sniper"){bar.style.display="none";mining=null;return;}
+  if(!mouseDown||dead||won||HOTBAR[selSlot].kind==="gun"||HOTBAR[selSlot].kind==="sniper"||HOTBAR[selSlot].kind==="potion"){bar.style.display="none";mining=null;return;}
   const rb=rayBlocks(5.5);
   if(!rb||rb.id===B.FRAME||rb.id===B.CORE||rb.id===B.BEDROCK||rb.id===B.LAVA||rb.id===B.STEEL||
      (DIM===2&&!(typeof pvpCanMine==="function"&&pvpCanMine(rb.hit)))){bar.style.display="none";mining=null;return;}
@@ -1671,6 +1676,7 @@ function rightClick(){
   if(HUB.on)return;
   { const rb=rayBlocks(5.5); if(rb&&rb.id===B.CHEST){openChest(...rb.hit);VM.swing(0.6);return;} }
   const item=HOTBAR[selSlot];
+  if(item.kind==="potion"){usePotion(item.pot);return;}
   if(item.kind==="bow"){shootArrow();return;}
   if(item.kind==="gun"){fireWeapon("pistol");return;}
   if(item.kind==="sniper"){setScope(!SCOPE.on);return;}
@@ -1697,6 +1703,7 @@ function swordDmg(){
 function tryAttack(){
   if(HUB.on)return;
   const held=HOTBAR[selSlot];
+  if(held.kind==="potion"){usePotion(held.pot);return;}
   if(held.kind==="gun"){fireWeapon("pistol");return;}
   if(held.kind==="sniper"){fireWeapon("sniper");return;}
   const heavy=held.kind==="tool"&&held.tool==="axe"&&P.axe>0;
@@ -2409,7 +2416,10 @@ const HOTBAR=[
   {kind:"block",ic:"🟨",name:"沙子",id:B.SAND,res:"sand"},
   {kind:"block",ic:"🧊",name:"玻璃",id:B.GLASS,res:"glass"},
   {kind:"block",ic:"🧱",name:"磚塊",id:B.BRICK,res:"brick"},
-  {kind:"block",ic:"💡",name:"螢光石",id:B.GLOW,res:"glow"}
+  {kind:"block",ic:"💡",name:"螢光石",id:B.GLOW,res:"glow"},
+  {kind:"potion",ic:"🧪",name:"治療",res:"heal",pot:"heal"},
+  {kind:"potion",ic:"🍎",name:"金蘋果",res:"apple",pot:"apple"},
+  {kind:"potion",ic:"👁️",name:"夜視",res:"nv",pot:"nv"}
 ];
 let selSlot=0;
 const hotbarEl=document.getElementById("hotbar");
@@ -2417,7 +2427,7 @@ HOTBAR.forEach((it,i)=>{
   const d=document.createElement("div");
   d.className="slot"+(i===0?" sel":"");
   d.innerHTML=`<span class="kb">${i<9?i+1:""}</span><span class="ic">${it.ic}</span>
-    <span>${it.name}</span><span class="ct" id="hb${i}"></span>`;
+    <span class="nmx">${it.name}</span><span class="ct" id="hb${i}"></span>`;
   hotbarEl.appendChild(d);
 });
 function selectSlot(i){
@@ -2444,7 +2454,7 @@ const RECIPES=[
   {id:"sw2",nm:"🗡 鐵劍（傷害 16）",cost:{iron:4,wood:1},once:1,ok:()=>P.sword<2,act:()=>P.sword=2},
   {id:"sw3",nm:"🗡 鑽石劍（傷害 30）",cost:{diamond:3,wood:1},once:1,ok:()=>P.sword<3,act:()=>P.sword=3},
   {id:"bow",nm:"🏹 箭 ×8",cost:{wood:1,stone:1},ok:()=>true,act:()=>counts.arrow+=8},
-  {id:"gun",nm:"🔫 手槍（傷害 22 · 射程 60 · 即時命中）",cost:{iron:6,gold:2,coal:2},once:1,ok:()=>P.gun<1,act:()=>P.gun=1},
+  {id:"gun",nm:"🔫 手槍（傷害 22 · 射程 60 · 即時命中 · 附 12 發）",cost:{iron:6,gold:2,coal:2},once:1,ok:()=>P.gun<1,act:()=>{P.gun=1;counts.ammo+=12;}},
   {id:"ammo",nm:"🔹 子彈 ×12",cost:{iron:1,coal:1},ok:()=>true,act:()=>counts.ammo+=12},
   {id:"snp",nm:"🎯 狙擊槍（傷害 90 · 爆頭 ×2 · 射程 130 · 右鍵瞄準）",cost:{iron:6,diamond:2,coal:2},once:1,ok:()=>P.sniper<1,act:()=>{P.sniper=1;counts.sammo+=5;}},
   {id:"sam",nm:"🔸 狙擊彈 ×5",cost:{iron:1,gold:1},ok:()=>true,act:()=>counts.sammo+=5},
@@ -2481,9 +2491,30 @@ function renderCraft(){
       if(!r.ok()||!canAfford(r.cost))return;
       Object.entries(r.cost).forEach(([k,v])=>counts[k]-=v);
       r.act(); SFX.craft(); renderCraft(); updateHUD(); VM.rebuild();
+      craftToHotbar(r);
     };
     row.appendChild(btn); list.appendChild(row);
   }
+}
+// 合成的東西對應到哪一格快捷欄
+const RECIPE_SLOT={pick:["tool","pickaxe"],axe:["tool","axe"],shv:["tool","shovel"],sw:["sword"],bow:["bow"],gun:["gun"],ammo:["gun"],snp:["sniper"],sam:["sniper"],
+  plk:["block","plank"],gls:["block","glass"],brk:["block","brick"],glw:["block","glow"],tor:["block","torch"],heal:["potion","heal"],nv:["potion","nv"],app:["potion","apple"]};
+function craftToHotbar(r){
+  const key=Object.keys(RECIPE_SLOT).find(k=>r.id===k||r.id.startsWith(k)&&/^\d$/.test(r.id.slice(k.length)));
+  if(!key)return;   // 護甲等不佔格
+  const[kind,sub]=RECIPE_SLOT[key];
+  const i=HOTBAR.findIndex(h=>h.kind===kind&&(!sub||h.tool===sub||h.res===sub||h.pot===sub));
+  if(i<0)return;
+  applyHotbarFilter(true);
+  const el=hotbarEl.children[i];
+  if(r.once){selectSlot(i);}       // 新裝備：直接拿在手上
+  el.classList.remove("newItem"); void el.offsetWidth; el.classList.add("newItem");
+  try{el.scrollIntoView({block:"nearest",inline:"nearest"});}catch(e){}
+  const n=hbVisible().indexOf(i)+1, nm=HOTBAR[i].kind==="sword"?"劍":HOTBAR[i].name;
+  const how=kind==="potion"?(TOUCH?"點它再按「放 / 用」喝下":"選它按右鍵喝下"):
+            (kind==="block"?(TOUCH?"點它再按「放 / 用」放置":"選它按右鍵放置"):
+            (r.once?(TOUCH?"已拿在手上，按「挖 / 攻」使用":"已拿在手上，按左鍵使用"):""));
+  toast(`✅ ${nm} → 快捷欄第 ${n} 格`+(how?"　"+how:""));
 }
 function toggleCraft(){
   if(PVP.on)return;
@@ -2556,6 +2587,7 @@ function updateHUD(){
     "　⛏ "+["無","木","鐵","鑽"][P.pickaxe]+
     "　🪓 "+["無","木","鐵","鑽"][P.axe]+
     "　🥄 "+["無","木","鐵"][P.shovel]+(P.gun?"　🔫 手槍":"")+(P.sniper?"　🎯 狙擊槍":"");
+  applyHotbarFilter();
   for(let i=0;i<HOTBAR.length;i++){
     const it=HOTBAR[i];
     document.getElementById("hb"+i).textContent=it.res?((PVP.on&&it.res==="ammo")?"∞":counts[it.res]):"";
@@ -2705,6 +2737,12 @@ function buildItemMesh(it){
     const flash=makeMuzzleFlash(0.5); flash.position.set(0,0.05,-1.2); g.add(flash); g.userData.flash=flash;
     g.userData.bolt=bolt;
     g.rotation.set(0.08,0.1,0); g.position.set(-0.06,0.16,0.25); g.scale.setScalar(0.95);
+  }else if(it.kind==="potion"){
+    if(it.pot==="apple"){g.add(box(0.2,0.2,0.2,M(0xf2c230,0x6a4a00),0,0.1,0));g.add(box(0.03,0.08,0.03,M(0x6a4a20),0,0.24,0));g.add(box(0.08,0.02,0.05,M(0x4caf50),0.05,0.25,0));}
+    else{const liq=it.pot==="nv"?M(0x4f7bff,0x1a2f80):M(0xff4f6a,0x801a2a);
+      g.add(box(0.2,0.2,0.2,M(0xdff4ff,0x223344),0,0.05,0)); g.add(box(0.17,0.13,0.17,liq,0,0.02,0));
+      g.add(box(0.08,0.1,0.08,M(0xdff4ff,0x223344),0,0.2,0)); g.add(box(0.09,0.05,0.09,M(0x8a5a2a),0,0.27,0));}
+    g.rotation.set(0.1,0.4,0.1);
   }else if(it.kind==="bow"){
     const wood=M(0x8a5a2a);
     g.add(box(0.05,0.32,0.05,wood,0,0,0));
@@ -3958,7 +3996,13 @@ function pvpStartMatch(){
   pvpBroadcast(msg); pvpBegin(msg);
 }
 const BOT_NAMES=["阿鐵","小狙","方塊仔","閃電","石頭","火把","鑽頭","雷達","鋼盔","飛毛腿","黑曜","沙包"];
+// 對戰用固定裝備；進場前先把冒險背包收起來，回大廳時還原（不會把對戰的槍帶回協作）
+let SURV_BAK=null;
+const SURV_KEYS=["pickaxe","axe","shovel","sword","armor","gun","sniper","maxHp"];
+function survStash(){ if(SURV_BAK)return; SURV_BAK={c:{...counts},p:Object.fromEntries(SURV_KEYS.map(k=>[k,P[k]]))}; }
+function survRestore(){ if(!SURV_BAK)return; Object.assign(counts,SURV_BAK.c); for(const k of SURV_KEYS)P[k]=SURV_BAK.p[k]; SURV_BAK=null; P.hp=P.maxHp; }
 function pvpBegin(m){
+  survStash();
   if(HUB.on)SFX.whoosh();
   HUB.on=false; document.body.classList.remove("hub"); PVP.on=true; document.body.classList.add("pvp");
   document.getElementById("tbCraft").textContent="📋";
@@ -4035,12 +4079,28 @@ function pvpRespawn(first){
   VM.rebuild(); updateHUD();
   if(!first)toast("🛡 已重生（2 秒無敵）");
 }
-function applyHotbarFilter(){
-  const keep=new Set(["sword","gun","sniper"]); let n=0;
+function slotOwned(it){
+  switch(it.kind){
+    case "sword": return true;                       // 空手 / 劍 永遠在第一格
+    case "tool": return P[it.tool]>0;
+    case "bow": return counts.arrow>0;
+    case "gun": return P.gun>0;
+    case "sniper": return P.sniper>0;
+    default: return counts[it.res]>0;
+  }
+}
+let hbSig="";
+function applyHotbarFilter(force){
+  const keep=new Set(["sword","gun","sniper"]);
+  const vis=HOTBAR.map(it=>PVP.on?(keep.has(it.kind)||(it.kind==="block"&&it.res==="plank")):slotOwned(it));
+  const sig=(PVP.on?"p":"c")+P.sword+vis.map(v=>v?1:0).join("");
+  if(sig===hbSig&&!force)return; hbSig=sig;
+  let n=0;
   [...hotbarEl.children].forEach((c,i)=>{const it=HOTBAR[i];
-    const vis=!PVP.on||keep.has(it.kind)||(it.kind==="block"&&it.res==="plank");
-    c.style.display=vis?"":"none";
-    c.querySelector(".kb").textContent=PVP.on?(vis?++n:""):(i<9?i+1:"");});
+    c.style.display=vis[i]?"":"none";
+    c.querySelector(".kb").textContent=vis[i]&&n<9?++n:"";
+    if(it.kind==="sword"){c.querySelector(".ic").textContent=P.sword?"🗡️":"✋";c.querySelector(".nmx").textContent=P.sword?["","木劍","鐵劍","鑽劍"][P.sword]:"空手";}});
+  if(!vis[selSlot])selectSlot(0);
 }
 function hbVisible(){ return HOTBAR.map((_,i)=>i).filter(i=>hotbarEl.children[i].style.display!=="none"); }
 
@@ -4703,7 +4763,7 @@ function hubZoneAt(x,z){
   return null;
 }
 function enterHub(){
-  HUB.on=true; PVP.on=false; PVP.phase="off";
+  HUB.on=true; PVP.on=false; PVP.phase="off"; survRestore();
   document.body.classList.add("hub"); document.body.classList.remove("pvp","scoped");
   for(const b of PVP.bots.values())scene.remove(b.g); PVP.bots.clear();
   for(const f of PVP.flags)if(f.g)scene.remove(f.g); PVP.flags=[];
@@ -4794,7 +4854,7 @@ function hubStartCoop(){
   document.getElementById("tbCraft").textContent="⚒";
   DIM=0; resetChunks(); leaveThemeIfNeeded(); syncDimVisuals();
   P.x=SPAWN.x;P.z=SPAWN.z;warmup(P.x,P.z,2);P.y=surfaceY(Math.floor(P.x),Math.floor(P.z))+1.05;P.vx=P.vy=P.vz=0;
-  updateHUD(); toast("🤝 協作冒險開始！"+(NET.on?"朋友可以隨時加入":"")); SFX.chime();
+  updateHUD(); VM.rebuild(); toast("🤝 協作冒險開始！"+(NET.on?"朋友可以隨時加入":"")); SFX.chime();
   if(typeof MUSIC!=="undefined")MUSIC.play("coop");
 }
 // 協作／對戰中回大廳（房主或單機）
