@@ -1,9 +1,9 @@
 // ===== Voxel World PWA Service Worker =====
-const CACHE = "voxel-lumen-v12";
+const CACHE = "voxel-lumen-v13";
 const THREE_CDN = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
 const ASSETS = [
   "./", "./index.html", "./manifest.json",
-  "./icon-192.png", "./icon-512.png", "./maskable-512.png"
+  "./peerjs.min.js", "./icon-192.png", "./icon-512.png", "./maskable-512.png"
 ];
 
 self.addEventListener("install", e => {

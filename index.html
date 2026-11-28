@@ -3011,16 +3011,36 @@ const NET={on:false,host:false,mute:false,peer:null,conns:new Map(),hostConn:nul
 const MP_PREFIX="vxlumen-";
 const AV_COLORS=[0x3fa7d6,0xe0603a,0x59c25a,0xd6b13f,0xb05bd6,0xe05c9a];
 function mpQS(k){ try{return new URLSearchParams(location.search).get(k);}catch(e){return null;} }
+// 明確指定 STUN/TURN：同 Wi-Fi 走區網直連；不同網路靠 STUN 打洞，打不通再走 PeerJS 的 TURN 中繼
+const ICE={iceServers:[
+  {urls:["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302","stun:stun.cloudflare.com:3478"]},
+  {urls:["turn:eu-0.turn.peerjs.com:3478","turn:us-0.turn.peerjs.com:3478"],username:"peerjs",credential:"peerjsp"}
+],sdpSemantics:"unified-plan"};
 function peerOpts(){
-  const o={debug:0}; const h=mpQS("peerhost");
+  const o={debug:1,config:ICE}; const h=mpQS("peerhost");
   if(h){o.host=h;o.port=+(mpQS("peerport")||9000);o.path=mpQS("peerpath")||"/";o.secure=mpQS("peersecure")==="1";}
   return o;
 }
+// 連線元件：優先用遊戲自帶的檔案（同網站、可離線快取），失敗才依序試 CDN
+const PEERJS_SRC=["./peerjs.min.js","https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js",
+  "https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js","https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"];
 function loadPeerJS(){
   if(window.Peer)return Promise.resolve();
-  return new Promise((ok,bad)=>{const sc=document.createElement("script");
-    sc.src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"; sc.onload=()=>ok(); sc.onerror=()=>bad(new Error("load"));
+  const one=src=>new Promise((ok,bad)=>{
+    if(window.Peer)return ok();                       // 前一個來源慢慢載完了就直接用
+    const sc=document.createElement("script");
+    const t=setTimeout(()=>window.Peer?ok():bad(new Error("timeout")),15000);   // 慢網路也給足時間；逾時不移除，晚到仍可用
+    sc.src=src; sc.onload=()=>{clearTimeout(t);window.Peer?ok():bad(new Error("noPeer"));}; sc.onerror=()=>{clearTimeout(t);sc.remove();bad(new Error("load"));};
     document.head.appendChild(sc);});
+  return PEERJS_SRC.reduce((pr,src)=>pr.catch(()=>one(src)),Promise.reject());
+}
+// 把 PeerJS 的錯誤翻成「哪一步壞了」
+function peerErrText(e){
+  const t=e&&e.type||"";
+  if(t==="network"||t==="server-error"||t==="socket-error"||t==="socket-closed")return "連不到配對伺服器（PeerJS 雲端），請檢查網路或稍後再試";
+  if(t==="browser-incompatible")return "這個瀏覽器不支援點對點連線";
+  if(t==="webrtc")return "點對點連線失敗（網路可能阻擋）";
+  return "連線失敗："+(t||(e&&e.message)||"未知");
 }
 function mpMsg(t){document.getElementById("mpMsg").textContent=t;}
 function mpName(){ const v=(document.getElementById("mpName").value||"").trim().slice(0,10);
@@ -3233,14 +3253,15 @@ addEventListener("pagehide",()=>{ try{if(NET.peer)NET.peer.destroy();}catch(e){}
 /* ---- 房主 ---- */
 async function mpHost(){
   NET.myName=mpName(); HUB.offline=false; enterHub();      // 先進大廳，房間在背景建立
-  try{await loadPeerJS();}catch(e){HUB.offline=true;hubRefresh();toast("📴 離線模式：可以單人遊玩，朋友暫時無法加入");return;}
+  try{await loadPeerJS();}catch(e){HUB.offline=true;hubRefresh();toast("📴 無法載入連線元件，先離線單人遊玩");return;}
   let tries=0, nextCi=1;
   const open=()=>{
     const code=String(Math.floor(1000+Math.random()*9000));
     const peer=new Peer(MP_PREFIX+code,peerOpts());
     peer.on("open",id=>{
+      if(NET.on&&NET.peer&&NET.peer!==peer){try{peer.destroy();}catch(_){}return;}   // 已經有房間了，多的關掉
       const was=PVP.me();
-      NET.on=true;NET.host=true;NET.peer=peer;NET.myId=id;NET.code=code;NET.myName=mpName();
+      NET.on=true;NET.host=true;NET.peer=peer;NET.myId=id;NET.code=code;NET.myName=mpName(); HUB.offline=false;
       pvpRekey(was,id); if(PVP.on&&PVP.phase==="play")pvpSendState();
       hubRefresh(); toast(`🌐 房號 ${code} —— 朋友輸入房號就能加入`);
     });
@@ -3266,11 +3287,18 @@ async function mpHost(){
     });
     peer.on("disconnected",()=>{ if(!peer.destroyed)setTimeout(()=>{try{peer.reconnect();}catch(e){}},1500); });
     peer.on("error",e=>{
+      console.warn("peer:",e&&e.type,e);
       if(e.type==="unavailable-id"&&tries++<5){peer.destroy();open();return;}
-      if(!NET.on){HUB.offline=true;hubRefresh();toast("📴 房間建立失敗，改為離線模式");}
-      else console.warn("peer:",e);
+      if(!NET.on){
+        if(peer._failed)return; peer._failed=true;      // 同一次失敗可能連發好幾個錯誤，只處理一次
+        try{peer.destroy();}catch(_){}
+        HUB.offline=true; hubRefresh();
+        if(retry<4){retry++; toast(`📴 ${peerErrText(e)}　· ${retry*5} 秒後重試（${retry}/4）`); setTimeout(()=>{if(!NET.on&&HUB.on)open();},retry*5000);}
+        else toast("📴 "+peerErrText(e)+"　· 先離線單人遊玩，回主畫面可再試");
+      }
     });
   };
+  let retry=0;
   open();
 }
 
@@ -3280,12 +3308,14 @@ async function mpJoin(){
   if(code.length!==4){mpMsg("請輸入 4 位數房號");return;}
   setMpButtons(true); mpMsg("連線中…");
   try{await loadPeerJS();}catch(e){mpMsg("❌ 無法載入連線元件（需要網路）");setMpButtons(false);return;}
-  const peer=new Peer(undefined,peerOpts()); let done=false;
+  const peer=new Peer(undefined,peerOpts()); let done=false, stage="server";
   const fail=t=>{ if(done)return; done=true; mpMsg("❌ "+t); setMpButtons(false); try{peer.destroy();}catch(e){} };
-  const timer=setTimeout(()=>fail("連線逾時，請確認房號與兩台在同一個 Wi-Fi"),15000);
+  const timer=setTimeout(()=>fail(stage==="server"?"連不到配對伺服器（PeerJS 雲端），請檢查網路或稍後再試":
+    stage==="p2p"?`找到房間 ${code}，但點對點連線建立不起來（網路阻擋），可試試兩台連同一個 Wi-Fi`:"房主沒有回應，請確認房主還在遊戲中"),20000);
   peer.on("open",id=>{
+    stage="p2p"; mpMsg(`連線中…（已連上伺服器，正在找房間 ${code}）`);
     const conn=peer.connect(MP_PREFIX+code,{reliable:true,serialization:"json"});
-    conn.on("open",()=>conn.send({t:"hello",name:mpName()}));
+    conn.on("open",()=>{stage="hello";conn.send({t:"hello",name:mpName()});});
     conn.on("data",m=>{
       conn._seen=performance.now();
       if(m&&m.t==="welcome"){
@@ -3308,8 +3338,9 @@ async function mpJoin(){
     conn.on("close",()=>{ if(!NET.on)return fail("連線中斷"); clientLost(); });
   });
   peer.on("error",e=>{
-    if(e.type==="peer-unavailable")fail(`找不到房間 ${code}`);
-    else if(!NET.on)fail("連線失敗："+(e.type||e.message));
+    console.warn("peer:",e&&e.type,e);
+    if(e.type==="peer-unavailable")fail(`找不到房間 ${code}（請確認房號，且房主畫面上已顯示房號）`);
+    else if(!NET.on)fail(peerErrText(e));
   });
 }
 document.getElementById("mpHostBtn").onclick=()=>{audio();SFX.ui();mpHost();};
