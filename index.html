@@ -3239,7 +3239,9 @@ async function mpHost(){
     const code=String(Math.floor(1000+Math.random()*9000));
     const peer=new Peer(MP_PREFIX+code,peerOpts());
     peer.on("open",id=>{
+      const was=PVP.me();
       NET.on=true;NET.host=true;NET.peer=peer;NET.myId=id;NET.code=code;NET.myName=mpName();
+      pvpRekey(was,id); if(PVP.on&&PVP.phase==="play")pvpSendState();
       hubRefresh(); toast(`🌐 房號 ${code} —— 朋友輸入房號就能加入`);
     });
     peer.on("connection",conn=>{
@@ -3914,6 +3916,16 @@ const PVP={on:false,phase:"off",cfg:{mode:"tdm",diff:1,size:3,map:"arena"},myTea
     sendHit(tg.id,dmg,hs,w); return false;
   }
 };
+// 房間在背景建立：若比賽開打時還沒連上（自己的 id 是 "me"），連上後要把名單裡的自己改成新 id，
+// 否則 PVP.me() 換了之後玩家就從名單消失，雙方擊殺都不計分
+function pvpRekey(oldId,newId){
+  if(!oldId||oldId===newId)return;
+  const r=PVP.roster.get(oldId);
+  if(r){PVP.roster.delete(oldId); r.id=newId; PVP.roster.set(newId,r);}
+  for(const f of PVP.flags)if(f.by===oldId)f.by=newId;
+  for(const b of PVP.bots.values())if(b.tgt===oldId)b.tgt=newId;
+  if(PVP.lastBy===oldId)PVP.lastBy=newId;
+}
 const nameOfP=id=>{const r=PVP.roster.get(id);return r?r.name:(id===PVP.me()?(NET.myName||"你"):"?");};
 const teamOfP=id=>{const r=PVP.roster.get(id);return r?r.team:-1;};
 function sendHit(to,dmg,hs,w,by){
