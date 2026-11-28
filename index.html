@@ -3916,8 +3916,9 @@ const PVP={on:false,phase:"off",cfg:{mode:"tdm",diff:1,size:3,map:"arena"},myTea
 };
 const nameOfP=id=>{const r=PVP.roster.get(id);return r?r.name:(id===PVP.me()?(NET.myName||"你"):"?");};
 const teamOfP=id=>{const r=PVP.roster.get(id);return r?r.team:-1;};
-function sendHit(to,dmg,hs,w){
-  const m={t:"Phit",to,dmg,hs:hs?1:0,w,by:PVP.me()};
+function sendHit(to,dmg,hs,w,by){
+  // by：真正的攻擊者（電腦開槍時是 bot 的 id，不能記成房主自己，否則擊殺不計分）
+  const m={t:"Phit",to,dmg,hs:hs?1:0,w,by:by||PVP.me()};
   if(to===PVP.me()){pvpHurtMe(dmg,m.by,w,hs);return;}
   if(NET.host){const c=NET.conns.get(to);if(c&&c.open){m.from=NET.myId;c.send(m);}}
   else NET.send(m);
@@ -4453,7 +4454,7 @@ function botFire(b,tg,D){
   if(!hitE)return;
   const dmg=sn?(hs?150:90):Math.round(D.dmg*(hs?1.5:1));
   if(hitE.bot)botDamage(hitE.bot,dmg,b.id,sn?"sniper":"pistol",hs);
-  else sendHit(hitE.id,dmg,hs,sn?"sniper":"pistol");
+  else sendHit(hitE.id,dmg,hs,sn?"sniper":"pistol",b.id);
 }
 function showShot(a,b,w,by){
   if(DIM!==2&&PVP.on)return;
@@ -4571,6 +4572,7 @@ function pvpMsg(m,conn){
       if(host&&conn)for(const[id,c]of NET.conns)if(id!==conn.peer&&c.open)c.send(m);
       if(m.d===DIM)showShot(m.a,m.b,m.w,m.by||m.from); break;
     case "Phit":
+      if(host&&conn)m.by=conn.peer;
       if(host&&m.to!==NET.myId){const c=NET.conns.get(m.to);if(c&&c.open)c.send(m);break;}
       pvpHurtMe(m.dmg,m.by,m.w,m.hs); break;
     case "Phitbot": if(host){const b=PVP.bots.get(m.id);if(b)botDamage(b,m.dmg,m.from,m.w,m.hs);} break;
